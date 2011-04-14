@@ -1,0 +1,74 @@
+import XMonad
+
+import XMonad.ManageHook
+import qualified XMonad.StackSet as W
+
+import XMonad.Hooks.ManageDocks
+import XMonad.Hooks.ManageHelpers
+
+import XMonad.Layout.Grid
+import XMonad.Layout.IM
+import XMonad.Layout.Maximize
+import XMonad.Layout.Named
+import XMonad.Layout.NoBorders
+import XMonad.Layout.PerWorkspace
+import XMonad.Layout.Reflect
+import XMonad.Layout.LayoutModifier (ModifiedLayout)
+
+import XMonad.Config.Azerty
+
+import XMonad.Config.Desktop (desktopLayoutModifiers)
+import XMonad.Config.Gnome
+import XMonad.Hooks.SetWMName
+
+import qualified Data.Map as M
+import Data.List
+import Data.Ratio
+
+main = xmonad gnomeConfig
+        { modMask = mod4Mask
+        , workspaces = myWorkspaces
+        , startupHook = setWMName "LD3D"
+        , keys = \c -> myKeys c `M.union` azertyKeys c `M.union` keys gnomeConfig c
+        , manageHook = myManageHook <+> manageHook gnomeConfig
+        , layoutHook = smartBorders $ desktopLayoutModifiers $ myLayout
+        }
+
+-- Workspaces
+myWorkspaces = ["1-www", "2-im", "3", "4", "5", "6", "7", "8", "9"]
+
+-- Key bindings
+myKeys x = M.fromList $ my_keys x
+    where
+        my_keys conf@(XConfig {XMonad.modMask = modm}) =
+                     [ ((modm, xK_BackSpace), withFocused (sendMessage . maximizeRestore))
+                     ]
+
+-- Apps to specific workspace
+myManageHook = composeAll
+    [ resource =? "google-chrome" --> doF (W.shift "1-www")
+    , resource =? "skype" --> doF (W.shift "2-im")
+    , resource =? "empathy" --> doF (W.shift "2-im")
+    , resource =? "pidgin" --> doF (W.shift "2-im")
+    , resource =? "xchat-gnome" --> doF (W.shift "2-im")
+    , isFullscreen --> doFullFloat
+    , className =? "Gnome-typing-monitor" --> doFullFloat
+    ]
+
+-- Layouts
+myLayout = onWorkspace "1-www" Full $ onWorkspace "2-im" im_layout $ standard_layouts
+    where
+        standard_layouts = nameTail $ maximize (standard_layout ||| Mirror standard_layout ||| Full)
+        standard_layout = Tall nmaster delta ratio
+        nmaster = 1
+        ratio = 2/3
+        delta = 3/100
+
+        im_layout = named "IM" $ withIM (1/5) (imRules) $ reflectHoriz $
+            withIM (1/4) (imRules) $ Grid
+            where
+                imRules = Or skypeRule $ Or empathyRule pidginRule
+                skypeRule = And (ClassName "Skype") (Role "MainWindow")
+                empathyRule = And (ClassName "Empathy") (Role "contact_list")
+                pidginRule = And (ClassName "Pidgin") (Role "buddy_list")
+

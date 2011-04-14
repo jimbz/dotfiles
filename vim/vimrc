@@ -1,1 +1,80 @@
-/home/jim/.vimrc
+set nocompatible
+
+"Change leader from '\' to ,
+"let mapleader = ","
+
+" Color scheme and syntax highlighting
+colorscheme desert
+syntax on
+
+"Tabs and indent (python style)
+set shiftwidth=4
+set tabstop=4
+set expandtab
+set autoindent
+if has("autocmd")
+  filetype plugin indent on
+endif
+
+"Recursively set the path of the project.
+set path=$PWD/**
+
+" From the default configuration file. Commented by default to keep
+" compatibility with Vi.
+set showcmd        " Show (partial) command in status line.
+set showmatch      " Show matching brackets.
+set ignorecase     " Do case insensitive matching
+set smartcase      " Do smart case matching
+set incsearch      " Incremental search
+set autowrite      " Automatically save before commands like :next and :make
+set autoread       " Automatically update file if changed on disk
+set hidden         " Hide buffers when they are abandoned
+set mouse=a        " Enable mouse usage (all modes)
+
+" change to directory of current file automatically
+":autocmd BufEnter * lcd %:p:h
+
+" Remove the icon bar from the GUI
+set guioptions-=T
+set guioptions-=m
+
+" Virtual edit in block visual mode
+set virtualedit=block
+
+" Wildcard completion menu
+set wildmenu
+
+" Vertical diff
+set diffopt+=vertical
+
+" Macros
+" -- "Underline" with = signs
+noremap y= yyp:s/./=/g<enter>
+" -- Rebuild ctags database
+noremap =t :!ctags -R --c++-kinds=+p --fields=+iaS --extra=+q .<CR>
+" -- Decrease the number under cursor (C-A is reserved by screen)
+nnoremap <C-e> <C-a>
+"Automatically close the preview window
+"autocmd CursorMovedI * if pumvisible() == 0|pclose|endif
+"book (Memoir)autocmd InsertLeave * if pumvisible() == 0|pclose|endif
+
+"LATEX
+" IMPORTANT: grep will sometimes skip displaying the file name if you
+" search in a singe file. This will confuse Latex-Suite. Set your grep
+" program to always generate a file-name.
+set grepprg=grep\ -nH\ $*
+
+" OPTIONAL: Starting with Vim 7, the filetype of empty .tex files defaults to
+" 'plaintex' instead of 'tex', which results in vim-latex not being loaded.
+" The following changes the default filetype back to 'tex':
+let g:tex_flavor='latex'
+let g:Tex_DefaultTargetFormat='pdf'
+
+" Allow to type "é" with vimlatex
+imap <buffer> <leader>it <Plug>Tex_InsertItemOnThisLine
+
+"TagList
+let g:Tlist_Use_Right_Window=1
+let g:Tlist_Exit_OnlyWindow=1
+let g:Tlist_Auto_Open=1
+
