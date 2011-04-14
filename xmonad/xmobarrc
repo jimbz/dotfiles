@@ -1,0 +1,10 @@
+Config { commands = [ Run StdinReader 
+                    , Run Com "date" ["+'%a %d %b %k:%M'"] "date" 10
+                    , Run Battery ["-L","25","-H","75","--low","#FF0000","--normal","#F9FF00","--high","#00FF00"] 600
+                    , Run Network "wlan0" [] 10
+                    , Run Cpu [] 10
+                    , Run Com "dropbox" ["status"] "dropbox" 10
+                    ] 
+       , template = " %StdinReader% }{ DBx: <fc=cyan>%dropbox%</fc> | %cpu% | %wlan0% | %battery%  <fc=white>%date%</fc> "
+       }
+

@@ -1,0 +1,79 @@
+import XMonad
+
+import XMonad.Hooks.DynamicLog
+import XMonad.Hooks.UrgencyHook
+
+import XMonad.ManageHook
+import qualified XMonad.StackSet as W
+
+import XMonad.Hooks.ManageDocks
+import XMonad.Hooks.ManageHelpers
+
+import XMonad.Actions.UpdatePointer
+
+import XMonad.Layout.Grid
+import XMonad.Layout.IM
+import XMonad.Layout.Maximize
+import XMonad.Layout.Named
+import XMonad.Layout.NoBorders
+import XMonad.Layout.PerWorkspace
+import XMonad.Layout.Reflect
+
+import XMonad.Config.Azerty
+
+import qualified Data.Map as M
+
+main = xmonad =<< myStatus myConfig
+
+-- Main configuration
+myConfig = withUrgencyHook NoUrgencyHook azertyConfig
+        { modMask = mod4Mask
+        , workspaces = ["1-www", "2-im", "3", "4", "5", "6", "7", "8", "9"]
+        , logHook = updatePointer Nearest
+        , manageHook = myManageHook
+        , layoutHook = avoidStruts $ smartBorders $ myLayout
+        , keys = myKeys
+        , terminal = "urxvt"
+        }
+
+-- Key bindings
+myKeys x = M.union (keys azertyConfig x) (M.fromList (my_keys x))
+    where
+        my_keys conf@(XConfig {XMonad.modMask = modm}) =
+                     [ ((modm, xK_BackSpace), withFocused (sendMessage . maximizeRestore))
+                     ]
+
+-- Apps to specific workspace
+myManageHook = shift_hook <+> manageHook defaultConfig
+    where
+        shift_hook = composeAll
+            [ resource =? "google-chrome" --> doF (W.shift "1-www")
+            , resource =? "skype" --> doF (W.shift "2-im")
+            , resource =? "empathy" --> doF (W.shift "2-im")
+            , resource =? "pidgin" --> doF (W.shift "2-im")
+            ]
+
+-- Status bar
+myStatus = statusBar my_bar my_pp toggle_struts_key
+    where
+        my_bar = "xmobar"
+        my_pp = xmobarPP { ppTitle = xmobarColor "green"  "" . shorten 40 }
+        toggle_struts_key XConfig {XMonad.modMask = modMask} = (modMask, xK_b)
+
+-- Layouts
+myLayout = onWorkspace "1-www" Full $ onWorkspace "2-im" im_layout $ standard_layouts
+    where
+        standard_layouts = nameTail $ maximize (standard_layout ||| Mirror standard_layout ||| Full)
+        standard_layout = Mirror $ Tall nmaster delta ratio
+        nmaster = 1
+        ratio = 2/3
+        delta = 3/100
+
+        im_layout = named "IM" $ withIM (1/5) (imRules) $ reflectHoriz $
+            withIM (1/4) (imRules) $ Grid
+        imRules = Or skypeRule $ Or empathyRule pidginRule
+        skypeRule = (ClassName "Skype") -- `And` (Role "MainWindow")
+            -- Version 2.2 of Skype does not use the Role property anymore
+        empathyRule = And (ClassName "Empathy") (Role "contact_list")
+        pidginRule = And (ClassName "Pidgin") (Role "buddy_list")
+
