@@ -1,0 +1,65 @@
+! urxvt configuration
+! ===================
+! 
+! font preference
+URxvt.font:      xft:Bitstream Vera Sans Mono:autohint=true:size=9,\
+    -*-terminus-*-r-normal--14-140-72-72-c-80-iso8859-15
+URxvt.boldFont:  xft:Bitstream Vera Sans Mono:bold:autohint=true:size=9,\
+    -*-terminus-bold-*-*-*-*-*-*-*-*-*-*-*
+!initial size
+URxvt.geometry:           120x35
+!internal whitespace
+URxvt.internalBorder:     5
+!fade text n% upon unfocus
+URxvt.fading:             20
+!darken=(0 to 100) lighten=(-1 to -100)
+URxvt.shading:            30
+!tint background with this color
+URxvt.tintColor:          black
+!set to 32-bit for real transparency (compositing required)
+!URxvt.depth:             24
+!save n lines of scrollback buffer
+URxvt.saveLines:          32767
+!flash screen for attention
+URxvt.visualBell:         false
+!jump to bottom (prompt) on keypress
+URxvt.scrollTtyKeypress:  true
+!jump to bottom (prompt) when tty gets new lines
+URxvt.scrollWithBuffer:   false
+!jump to bottom (prompt) on tty output
+URxvt.scrollTtyOutput:    false
+!toggle scrollbar
+URxvt.scrollBar:          false
+!scrollbar styles: rxvt, plain, next or xterm
+URxvt.scrollstyle:        plain
+!scrollbar alignment
+URxvt.scrollBar_right:    true
+URxvt.scrollColor:        #777777
+!enable pseudo-transparency (requires depth: 24 (see above))
+URxvt.inheritPixmap:      true
+!delimiters for double-click mouse selection
+URxvt.cutchars:           "()*,<>[]{}|'"
+!screen dump settings
+URxvt.print-pipe:         cat > $(echo urxvt.dump.$(date +'%Y%M%d%H%m%S'))
+!secondary screen scroll (default enabled)
+URxvt.secondaryScroll:    true
+!de-iconify (map) on receipt of a bell character
+URxvt.mapAlert:           true
+!inhibit writing record into the system log file utmp
+URxvt.utmpInhibit:        true
+!! BEGIN urlLauncher settings !!
+URxvt.perl-lib:           /usr/lib/urxvt/perl/
+URxvt.perl-ext-common:    default,matcher
+URxvt.urlLauncher:        /usr/bin/chromium
+URxvt.matcher.button:     1
+!! END urlLauncher settings !!
+
+! Colors
+URxvt.background:       #000000
+URxvt.foreground:       gray90
+URxvt.color7:           gray90
+URxvt.colorBD:          #ffffff
+URxvt.cursorColor:      #e0e080
+URxvt.throughColor:     #8080f0
+URxvt.highlightColor:   #f0f0f0
+Rxvt.underlineColor:   yellow
