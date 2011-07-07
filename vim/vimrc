@@ -43,6 +43,7 @@ set virtualedit=block
 
 " Wildcard completion menu
 set wildmenu
+set wildmode=list:longest
 
 " Vertical diff
 set diffopt+=vertical
@@ -78,3 +79,6 @@ let g:Tlist_Use_Right_Window=1
 let g:Tlist_Exit_OnlyWindow=1
 let g:Tlist_Auto_Open=1
 
+" Per-directory vimrc
+set exrc
+set secure
