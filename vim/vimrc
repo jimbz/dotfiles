@@ -1,5 +1,24 @@
 set nocompatible
 
+" Vundle
+    filetype off                   " required!
+
+    set rtp+=~/.vim/bundle/vundle/
+    call vundle#rc()
+
+    " let Vundle manage Vundle
+    " required! 
+    Bundle 'gmarik/vundle'
+
+    " My Bundles here:
+    Bundle 'Align'
+    Bundle 'a.vim'
+    Bundle 'surround.vim'
+    Bundle 'Solarized'
+" Vundle end
+
+filetype plugin indent on
+
 "Change leader from '\' to ,
 "let mapleader = ","
 
@@ -82,3 +101,4 @@ let g:Tlist_Auto_Open=1
 " Per-directory vimrc
 set exrc
 set secure
+
