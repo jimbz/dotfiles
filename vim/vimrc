@@ -14,7 +14,15 @@ set nocompatible
     Bundle 'Align'
     Bundle 'a.vim'
     Bundle 'surround.vim'
+    Bundle 'minibufexpl.vim'
+    Bundle 'taglist.vim'
+    Bundle 'OmniCppComplete'
+    Bundle 'vcscommand.vim'
+    Bundle 'vimlatex'
     Bundle 'Solarized'
+    Bundle 'SudoEdit.vim'
+    Bundle 'camelcasemotion'
+
 " Vundle end
 
 filetype plugin indent on
@@ -23,7 +31,8 @@ filetype plugin indent on
 "let mapleader = ","
 
 " Color scheme and syntax highlighting
-colorscheme desert
+set background=dark
+colorscheme solarized
 syntax on
 
 "Tabs and indent (python style)
@@ -31,9 +40,6 @@ set shiftwidth=4
 set tabstop=4
 set expandtab
 set autoindent
-if has("autocmd")
-  filetype plugin indent on
-endif
 
 "Recursively set the path of the project.
 set path=$PWD/**
@@ -50,6 +56,8 @@ set autoread       " Automatically update file if changed on disk
 set hidden         " Hide buffers when they are abandoned
 set mouse=a        " Enable mouse usage (all modes)
 
+set cursorline
+
 " change to directory of current file automatically
 ":autocmd BufEnter * lcd %:p:h
 
@@ -62,7 +70,7 @@ set virtualedit=block
 
 " Wildcard completion menu
 set wildmenu
-set wildmode=list:longest
+set wildmode=longest,full
 
 " Vertical diff
 set diffopt+=vertical
@@ -71,7 +79,7 @@ set diffopt+=vertical
 " -- "Underline" with = signs
 noremap y= yyp:s/./=/g<enter>
 " -- Rebuild ctags database
-noremap =t :!ctags -R --c++-kinds=+p --fields=+iaS --extra=+q .<CR>
+noremap =t :!ctags -R --c++-kinds=+pl --fields=+iaS --extra=+q .<CR>
 " -- Decrease the number under cursor (C-A is reserved by screen)
 nnoremap <C-e> <C-a>
 "Automatically close the preview window
@@ -94,11 +102,15 @@ let g:Tex_DefaultTargetFormat='pdf'
 imap <buffer> <leader>it <Plug>Tex_InsertItemOnThisLine
 
 "TagList
-let g:Tlist_Use_Right_Window=1
 let g:Tlist_Exit_OnlyWindow=1
-let g:Tlist_Auto_Open=1
+noremap =<CR> :TlistToggle<CR>
 
 " Per-directory vimrc
 set exrc
 set secure
 
+" Auto close preview window
+autocmd InsertLeave * if pumvisible() == 0|pclose|endif
+
+" Search errors in quickfix window
+nmap gb :copen<CR>/error:<CR>
