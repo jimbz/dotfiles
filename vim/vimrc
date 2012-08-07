@@ -18,10 +18,13 @@ set nocompatible
     Bundle 'taglist.vim'
     Bundle 'OmniCppComplete'
     Bundle 'vcscommand.vim'
-    Bundle 'vimlatex'
+    "Bundle 'vimlatex'
+    Bundle 'LaTeX-Box-Team/LaTeX-Box'
     Bundle 'Solarized'
     Bundle 'SudoEdit.vim'
     Bundle 'camelcasemotion'
+    Bundle 'pyflakes.vim'
+    Bundle 'pydoc.vim'
 
 " Vundle end
 
@@ -75,11 +78,19 @@ set wildmode=longest,full
 " Vertical diff
 set diffopt+=vertical
 
+" A.vim configuration
+let g:alternateNoDefaultAlternate = 0
+" -- CUDA support
+let g:alternateExtensions_cu = "h,cuh"
+let g:alternateExtensions_h = "c,cpp,cxx,cc,CC"
+
 " Macros
 " -- "Underline" with = signs
 noremap y= yyp:s/./=/g<enter>
 " -- Rebuild ctags database
-noremap =t :!ctags -R --c++-kinds=+pl --fields=+iaS --extra=+q .<CR>
+noremap =t :!ctags -R --langmap=c:+.cu --c++-kinds=+pl --fields=+iaS --extra=+q .<CR>
+let tlist_cuda_settings= 'c++;n:namespace;v:variable;d:macro;t:typedef;' .
+                             \ 'c:class;g:enum;s:struct;u:union;f:function'
 " -- Decrease the number under cursor (C-A is reserved by screen)
 nnoremap <C-e> <C-a>
 "Automatically close the preview window
@@ -92,14 +103,19 @@ nnoremap <C-e> <C-a>
 " program to always generate a file-name.
 set grepprg=grep\ -nH\ $*
 
+" VimLatex
 " OPTIONAL: Starting with Vim 7, the filetype of empty .tex files defaults to
 " 'plaintex' instead of 'tex', which results in vim-latex not being loaded.
 " The following changes the default filetype back to 'tex':
 let g:tex_flavor='latex'
 let g:Tex_DefaultTargetFormat='pdf'
-
+let g:Tex_GotoError=0
 " Allow to type "é" with vimlatex
 imap <buffer> <leader>it <Plug>Tex_InsertItemOnThisLine
+
+" LaTeX-box
+let g:LatexBox_latexmk_options='-pvc'
+let g:LatexBox_Folding='yes'
 
 "TagList
 let g:Tlist_Exit_OnlyWindow=1
@@ -114,4 +130,3 @@ autocmd InsertLeave * if pumvisible() == 0|pclose|endif
 
 " Search errors in quickfix window
 nmap gb :copen<CR>/error:<CR>
-
