@@ -79,10 +79,10 @@ set wildmode=longest,full
 set diffopt+=vertical
 
 " A.vim configuration
-let g:alternateNoDefaultAlternate = 0
+let g:alternateNoDefaultAlternate = 1
 " -- CUDA support
 let g:alternateExtensions_cu = "h,cuh"
-let g:alternateExtensions_h = "c,cpp,cxx,cc,CC"
+let g:alternateExtensions_h = "cu,c,cpp,cxx,cc,CC"
 
 " Macros
 " -- "Underline" with = signs
@@ -130,3 +130,4 @@ autocmd InsertLeave * if pumvisible() == 0|pclose|endif
 
 " Search errors in quickfix window
 nmap gb :copen<CR>/error:<CR>
+
