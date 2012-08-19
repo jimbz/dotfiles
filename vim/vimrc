@@ -131,3 +131,8 @@ autocmd InsertLeave * if pumvisible() == 0|pclose|endif
 " Search errors in quickfix window
 nmap gb :copen<CR>/error:<CR>
 
+" GCC Compiler
+compiler! gcc
+
+" Remembers 100 lines of commands history
+set history=100
