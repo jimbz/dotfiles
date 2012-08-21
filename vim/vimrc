@@ -12,13 +12,14 @@ set nocompatible
 
     " My Bundles here:
     Bundle 'Align'
+    Bundle 'Tabular'
     Bundle 'a.vim'
     Bundle 'surround.vim'
     Bundle 'minibufexpl.vim'
     Bundle 'taglist.vim'
     Bundle 'OmniCppComplete'
     Bundle 'vcscommand.vim'
-    "Bundle 'vimlatex'
+    "Bundle'vimlatex'
     Bundle 'LaTeX-Box-Team/LaTeX-Box'
     Bundle 'Solarized'
     Bundle 'SudoEdit.vim'
@@ -43,8 +44,12 @@ set tabstop=4
 set expandtab
 set autoindent
 
+" Add system-wide tags
+set tags+=~/.vim/tags/c
+" Add local include files to path
+set path+=/usr/local/include
 " Recursively set the path of the project.
-set path=$PWD/**
+set path+=$PWD/**
 
 " Various options
 set showcmd           " Show (partial) command in status line.
