@@ -22,10 +22,13 @@ set nocompatible
     "Bundle'vimlatex'
     Bundle 'LaTeX-Box-Team/LaTeX-Box'
     Bundle 'Solarized'
+    Bundle 'Zenburn'
+    Bundle 'chriskempson/base16-vim'
     Bundle 'SudoEdit.vim'
     Bundle 'camelcasemotion'
     Bundle 'pyflakes.vim'
     Bundle 'pydoc.vim'
+    Bundle 'snipMate'
 " Vundle end
 
 filetype plugin indent on
@@ -78,6 +81,11 @@ set guioptions-=m
 set wildmenu
 set wildmode=longest,full
 
+" Folding
+set foldminlines=5 " Min number of lines for folding
+"set foldopen=all
+set foldnestmax=5
+
 "TagList
 let g:Tlist_Exit_OnlyWindow=1
 noremap =<CR> :TlistToggle<CR>
@@ -116,7 +124,7 @@ let g:Tex_GotoError=0
 imap <buffer> <leader>it <Plug>Tex_InsertItemOnThisLine
 
 " LaTeX-box
-let g:LatexBox_latexmk_options='-pvc'
+"let g:LatexBox_latexmk_options='-pvc'
 let g:LatexBox_Folding='yes'
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -124,6 +132,10 @@ let g:LatexBox_Folding='yes'
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Syntax based folding
 autocmd FileType c,cpp,cuda setlocal foldmethod=syntax
+autocmd FileType c,cpp,cuda setlocal foldcolumn=3
+autocmd FileType c,cpp,cuda set columns=83
+" .cuh as CUDA files
+au BufEnter,BufNew *.cuh setlocal filetype=cuda
 " GCC Compiler
 compiler! gcc
 " A.vim configuration
