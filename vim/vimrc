@@ -36,6 +36,9 @@ filetype plugin indent on
 " Change leader from '\' to ,
 "let mapleader = ","
 
+" Columns
+set columns=83 " +3 to account for the foldcolumns
+
 " Color scheme and syntax highlighting
 set background=dark
 colorscheme solarized
@@ -48,7 +51,7 @@ set expandtab
 set autoindent
 
 " Add system-wide tags
-set tags+=~/.vim/tags/c
+"set tags+=~/.vim/tags/c-local
 " Add local include files to path
 set path+=/usr/local/include
 " Recursively set the path of the project.
@@ -121,7 +124,7 @@ let g:tex_flavor='latex'
 let g:Tex_DefaultTargetFormat='pdf'
 let g:Tex_GotoError=0
 " Allow to type "é" with vimlatex
-imap <buffer> <leader>it <Plug>Tex_InsertItemOnThisLine
+"imap <buffer> <leader>it <Plug>Tex_InsertItemOnThisLine
 
 " LaTeX-box
 "let g:LatexBox_latexmk_options='-pvc'
@@ -133,7 +136,6 @@ let g:LatexBox_Folding='yes'
 " Syntax based folding
 autocmd FileType c,cpp,cuda setlocal foldmethod=syntax
 autocmd FileType c,cpp,cuda setlocal foldcolumn=3
-autocmd FileType c,cpp,cuda set columns=83
 " .cuh as CUDA files
 au BufEnter,BufNew *.cuh setlocal filetype=cuda
 " GCC Compiler
@@ -141,7 +143,8 @@ compiler! gcc
 " A.vim configuration
 let g:alternateNoDefaultAlternate = 1
 let g:alternateExtensions_cu = "h,cuh"
-let g:alternateExtensions_h = "cu,c,cpp,cxx,cc,CC"
+let g:alternateExtensions_h = "cu,c,cpp,cxx,cc,CC,cuh"
+let g:alternateExtensions_cuh = "cu,c,cpp,cxx,cc,CC,h"
 " CUDA TagList support
 let tlist_cuda_settings= 'c++;n:namespace;v:variable;d:macro;t:typedef;' .
                              \ 'c:class;g:enum;s:struct;u:union;f:function'
