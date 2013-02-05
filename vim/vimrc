@@ -29,6 +29,8 @@ set nocompatible
     Bundle 'pyflakes.vim'
     Bundle 'pydoc.vim'
     Bundle 'snipMate'
+    Bundle 'ignovak/tcomment_vim'
+    Bundle 'Syntastic'
 " Vundle end
 
 filetype plugin indent on
@@ -36,8 +38,11 @@ filetype plugin indent on
 " Change leader from '\' to ,
 "let mapleader = ","
 
+" swap and backup files
+set directory=~/.backup//
+
 " Columns
-set columns=83 " +3 to account for the foldcolumns
+set colorcolumn=80
 
 " Color scheme and syntax highlighting
 set background=dark
@@ -106,7 +111,9 @@ noremap =t :!ctags -R --langmap=c:+.cu --c++-kinds=+pl --fields=+iaS --extra=+q 
 " Decrease the number under cursor (C-A is reserved by screen)
 nnoremap <C-e> <C-a>
 " Search errors in quickfix window
-nmap gb :copen<CR>/error:<CR>
+noremap gb :copen<CR>/error:<CR>
+" Switch buffers (for Putty sessions where std shortcut doesn't work)
+nnoremap <C-b> :b#<CR>
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " LATEX
@@ -135,7 +142,7 @@ let g:LatexBox_Folding='yes'
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Syntax based folding
 autocmd FileType c,cpp,cuda setlocal foldmethod=syntax
-autocmd FileType c,cpp,cuda setlocal foldcolumn=3
+autocmd FileType c,cpp,cuda setlocal foldcolumn=0
 " .cuh as CUDA files
 au BufEnter,BufNew *.cuh setlocal filetype=cuda
 " GCC Compiler
