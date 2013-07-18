@@ -11,29 +11,33 @@ set nocompatible
     Bundle 'gmarik/vundle'
 
     " My Bundles here:
-    Bundle 'Align'
-    Bundle 'Tabular'
+    " General
     Bundle 'a.vim'
-    Bundle 'surround.vim'
-    Bundle 'minibufexpl.vim'
-    Bundle 'taglist.vim'
-    Bundle 'OmniCppComplete'
-    Bundle 'vcscommand.vim'
-    "Bundle'vimlatex'
+    Bundle 'godlygeek/tabular'
+    Bundle 'tpope/vim-surround'
+    Bundle 'tpope/vim-repeat'
+    Bundle 'mbbill/undotree'
+    " Utils
+    Bundle 'SudoEdit.vim'
+    Bundle 'file-line'
+    Bundle 'tpope/vim-dispatch.git'
+    " Programming
+    Bundle 'majutsushi/tagbar'
+    "Bundle 'taglist.vim'
+    Bundle 'Valloric/YouCompleteMe'
+    Bundle 'SirVer/ultisnips'
+    Bundle 'scrooloose/syntastic'
     Bundle 'LaTeX-Box-Team/LaTeX-Box'
+    Bundle 'mhinz/vim-signify'
+    " Colorschemes
     Bundle 'Solarized'
     Bundle 'Zenburn'
     Bundle 'chriskempson/base16-vim'
-    Bundle 'SudoEdit.vim'
-    Bundle 'camelcasemotion'
-    Bundle 'pyflakes.vim'
-    Bundle 'pydoc.vim'
-    Bundle 'snipMate'
-    Bundle 'ignovak/tcomment_vim'
-    Bundle 'Syntastic'
 " Vundle end
-
 filetype plugin indent on
+
+" Solarized scheme on terminal needs only the 16-color palette
+set t_Co=16
 
 " Change leader from '\' to ,
 "let mapleader = ","
@@ -94,12 +98,26 @@ set foldminlines=5 " Min number of lines for folding
 "set foldopen=all
 set foldnestmax=5
 
-"TagList
-let g:Tlist_Exit_OnlyWindow=1
-noremap =<CR> :TlistToggle<CR>
+"TagBar
+noremap =<CR> :TagbarToggle<CR>
 
 " Auto close preview window
 autocmd InsertLeave * if pumvisible() == 0|pclose|endif
+
+" Wrap by word
+set wrap
+set linebreak
+set display=lastline
+
+" Move through wrapped lines
+inoremap <silent> <Down> <C-o>gj
+inoremap <silent> <Up> <C-o>gk
+noremap <silent> <Down> gj
+noremap <silent> <Up> gk
+noremap <silent> <M-j> gj
+noremap <silent> <M-k> gk
+noremap <silent> <M-h> h
+noremap <silent> <M-l> l
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Macros
@@ -136,6 +154,12 @@ let g:Tex_GotoError=0
 " LaTeX-box
 "let g:LatexBox_latexmk_options='-pvc'
 let g:LatexBox_Folding='yes'
+"Don't jump to quickfix window
+let g:LatexBox_quickfix=2
+"Async mode
+let g:LatexBox_latexmk_async=0
+"Use lualatex
+let g:LatexBox_latexmk_options='-pdflatex=lualatex'
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " C / C++ / CUDA
