@@ -27,7 +27,7 @@ set nocompatible
     Bundle 'Valloric/YouCompleteMe'
     Bundle 'SirVer/ultisnips'
     Bundle 'scrooloose/syntastic'
-    Bundle 'LaTeX-Box-Team/LaTeX-Box'
+    "Bundle 'LaTeX-Box-Team/LaTeX-Box'
     Bundle 'mhinz/vim-signify'
     " Colorschemes
     Bundle 'Solarized'
@@ -44,6 +44,11 @@ set t_Co=16
 
 " swap and backup files
 set directory=~/.backup//
+
+" Persistent undo
+set undofile                " Save undo's after file closes
+set undodir=~/.vim/undo     " where to save undo histories
+nmap =u :UndotreeToggle<CR>
 
 " Columns
 set colorcolumn=80
@@ -120,6 +125,13 @@ noremap <silent> <M-h> h
 noremap <silent> <M-l> l
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" YouCompleteMe
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" YCM/Ultisnips compatibility
+let g:UltiSnipsExpandTrigger='<c-j>'
+let g:ycm_seed_identifiers_with_syntax = 1
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Macros
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " "Underline" with = signs
@@ -146,20 +158,21 @@ set grepprg=grep\ -nH\ $*
 " 'plaintex' instead of 'tex', which results in vim-latex not being loaded.
 " The following changes the default filetype back to 'tex':
 let g:tex_flavor='latex'
-let g:Tex_DefaultTargetFormat='pdf'
-let g:Tex_GotoError=0
-" Allow to type "é" with vimlatex
-"imap <buffer> <leader>it <Plug>Tex_InsertItemOnThisLine
 
 " LaTeX-box
 "let g:LatexBox_latexmk_options='-pvc'
 let g:LatexBox_Folding='yes'
 "Don't jump to quickfix window
 let g:LatexBox_quickfix=2
+"Autosave
+let g:Latexmk_autosave=1
 "Async mode
 let g:LatexBox_latexmk_async=0
 "Use lualatex
-let g:LatexBox_latexmk_options='-pdflatex=lualatex'
+"let g:LatexBox_latexmk_options='-pdflatex=lualatex'
+
+" Manual
+au filetype tex setlocal makeprg=rubber\ --pdf\ --inplace\ -f\ %;\ rubber-info\ --check\ %
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " C / C++ / CUDA
