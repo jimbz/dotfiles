@@ -37,10 +37,11 @@ myConfig = withUrgencyHook NoUrgencyHook azertyConfig
         }
 
 -- Key bindings
-myKeys x = M.union (keys azertyConfig x) (M.fromList (my_keys x))
+myKeys x = M.union (M.fromList (my_keys x)) (keys azertyConfig x)
     where
         my_keys conf@(XConfig {XMonad.modMask = modm}) =
                      [ ((modm, xK_BackSpace), withFocused (sendMessage . maximizeRestore))
+                     , ((modm, xK_p), spawn "dmenu_run")
                      ]
 
 -- Apps to specific workspace
@@ -50,7 +51,7 @@ myManageHook = shift_hook <+> manageHook defaultConfig
             [ resource =? "google-chrome" --> doF (W.shift "1-www")
             , resource =? "skype" --> doF (W.shift "2-im")
             , resource =? "empathy" --> doF (W.shift "2-im")
-            , resource =? "pidgin" --> doF (W.shift "2-im")
+            , className =? "Pidgin" --> doF (W.shift "2-im")
             ]
 
 -- Status bar

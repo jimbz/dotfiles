@@ -117,3 +117,11 @@ export ANDROID_CMAKE=$ANDROID_ROOT/android-cmake
 export ANDTOOLCHAIN=$ANDROID_CMAKE/toolchain/android.toolchain.cmake
 alias android-cmake='cmake -DCMAKE_TOOLCHAIN_FILE=$ANDTOOLCHAIN '
 
+# TexLive
+export PATH=/usr/local/texlive/2011/bin/x86_64-linux:$PATH
+export INFOPATH=/usr/local/texlive/2011/texmf/doc/info:$INFOPATH
+export MANPATH=/usr/local/texlive/2011/texmf/doc/man:$MANPATH
+
+# Custom aliases
+alias go='gnome-open'
+
