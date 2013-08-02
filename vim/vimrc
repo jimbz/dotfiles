@@ -216,7 +216,7 @@ let g:tex_flavor='latex'
 
 " Manual
 au filetype tex setlocal makeprg=rubber\ --pdf\ --inplace\ -f\ %;\ rubber-info\ --check\ %
-au filetype tex map <LocalLeader>v :!xdg-open %<.pdf<CR><CR>
+au filetype tex noremap <localleader>v :!xdg-open %<.pdf&<CR>
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " C / C++ / CUDA
@@ -236,3 +236,4 @@ let g:alternateExtensions_cuh = "cu,c,cpp,cxx,cc,CC,h"
 " CUDA TagList support
 let tlist_cuda_settings= 'c++;n:namespace;v:variable;d:macro;t:typedef;' .
                              \ 'c:class;g:enum;s:struct;u:union;f:function'
+
