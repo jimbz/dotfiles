@@ -21,13 +21,14 @@ set nocompatible
     Bundle 'SudoEdit.vim'
     Bundle 'file-line'
     Bundle 'tpope/vim-dispatch.git'
+    Bundle 'kien/ctrlp.vim'
+    " Display
+    Bundle 'bling/vim-bufferline'
     " Programming
     Bundle 'majutsushi/tagbar'
-    "Bundle 'taglist.vim'
     Bundle 'Valloric/YouCompleteMe'
     Bundle 'SirVer/ultisnips'
     Bundle 'scrooloose/syntastic'
-    "Bundle 'LaTeX-Box-Team/LaTeX-Box'
     Bundle 'mhinz/vim-signify'
     " Colorschemes
     Bundle 'Solarized'
@@ -57,6 +58,10 @@ set colorcolumn=80
 set background=dark
 colorscheme solarized
 syntax on
+
+" Status line
+set laststatus=2
+set ruler
 
 " Tabs and indent (python style)
 set shiftwidth=4
@@ -105,6 +110,40 @@ set foldnestmax=5
 
 "TagBar
 noremap =<CR> :TagbarToggle<CR>
+let g:tagbar_left=1
+" -- handle CUDA as C++
+let g:tagbar_type_cpp = {
+    \ 'ctagstype' : 'c++',
+    \ 'kinds'     : [
+        \ 'd:macros:1:0',
+        \ 'p:prototypes:1:0',
+        \ 'g:enums',
+        \ 'e:enumerators:0:0',
+        \ 't:typedefs:0:0',
+        \ 'n:namespaces',
+        \ 'c:classes',
+        \ 's:structs',
+        \ 'u:unions',
+        \ 'f:functions',
+        \ 'm:members:0:0',
+        \ 'v:variables:0:0'
+    \ ],
+    \ 'sro'        : '::',
+    \ 'kind2scope' : {
+        \ 'g' : 'enum',
+        \ 'n' : 'namespace',
+        \ 'c' : 'class',
+        \ 's' : 'struct',
+        \ 'u' : 'union'
+    \ },
+    \ 'scope2kind' : {
+        \ 'enum'      : 'g',
+        \ 'namespace' : 'n',
+        \ 'class'     : 'c',
+        \ 'struct'    : 's',
+        \ 'union'     : 'u'
+    \ }
+\ }
 
 " Auto close preview window
 autocmd InsertLeave * if pumvisible() == 0|pclose|endif
@@ -123,6 +162,22 @@ noremap <silent> <M-j> gj
 noremap <silent> <M-k> gk
 noremap <silent> <M-h> h
 noremap <silent> <M-l> l
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" CtrlP
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+if has("gui_running")
+    let g:ctrlp_prompt_mappings = {
+                \ 'ToggleType(1)':        ['<c-Space>', '<c-f>', '<c-up>'],
+                \ }
+else
+    let g:ctrlp_prompt_mappings = {
+                \ 'ToggleType(1)':        ['<Nul>', '<c-f>', '<c-up>'],
+                \ }
+endif
+let g:ctrlp_extensions = ['mixed', 'buffertag', 'tag', 'line']
+let g:ctrlp_cmd = 'CtrlPMixed'
+
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " YouCompleteMe
@@ -159,20 +214,9 @@ set grepprg=grep\ -nH\ $*
 " The following changes the default filetype back to 'tex':
 let g:tex_flavor='latex'
 
-" LaTeX-box
-"let g:LatexBox_latexmk_options='-pvc'
-let g:LatexBox_Folding='yes'
-"Don't jump to quickfix window
-let g:LatexBox_quickfix=2
-"Autosave
-let g:Latexmk_autosave=1
-"Async mode
-let g:LatexBox_latexmk_async=0
-"Use lualatex
-"let g:LatexBox_latexmk_options='-pdflatex=lualatex'
-
 " Manual
 au filetype tex setlocal makeprg=rubber\ --pdf\ --inplace\ -f\ %;\ rubber-info\ --check\ %
+au filetype tex map <LocalLeader>v :!xdg-open %<.pdf<CR><CR>
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " C / C++ / CUDA
@@ -192,4 +236,3 @@ let g:alternateExtensions_cuh = "cu,c,cpp,cxx,cc,CC,h"
 " CUDA TagList support
 let tlist_cuda_settings= 'c++;n:namespace;v:variable;d:macro;t:typedef;' .
                              \ 'c:class;g:enum;s:struct;u:union;f:function'
-
