@@ -216,7 +216,7 @@ let g:tex_flavor='latex'
 
 " Manual
 au filetype tex setlocal makeprg=rubber\ --pdf\ --inplace\ -f\ %;\ rubber-info\ --check\ %
-au filetype tex noremap <localleader>v :!xdg-open %<.pdf&<CR>
+au filetype tex noremap <localleader>v :!xdg-open %<.pdf&<CR><CR>
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " C / C++ / CUDA
