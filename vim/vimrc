@@ -31,14 +31,11 @@ set nocompatible
     Bundle 'scrooloose/syntastic'
     Bundle 'mhinz/vim-signify'
     " Colorschemes
-    Bundle 'Solarized'
+    Bundle 'altercation/vim-colors-solarized'
     Bundle 'Zenburn'
     Bundle 'chriskempson/base16-vim'
 " Vundle end
 filetype plugin indent on
-
-" Solarized scheme on terminal needs only the 16-color palette
-set t_Co=16
 
 " Change leader from '\' to ,
 "let mapleader = ","
@@ -56,7 +53,12 @@ set colorcolumn=80
 
 " Color scheme and syntax highlighting
 set background=dark
+" F5 swith between dark and light background
+call togglebg#map("<F5>")
 colorscheme solarized
+" Solarized scheme on terminal needs only the 16-color palette
+set t_Co=16
+
 syntax on
 
 " Status line
@@ -112,7 +114,7 @@ set foldnestmax=5
 noremap =<CR> :TagbarToggle<CR>
 let g:tagbar_left=1
 " -- handle CUDA as C++
-let g:tagbar_type_cpp = {
+let g:tagbar_type_cuda = {
     \ 'ctagstype' : 'c++',
     \ 'kinds'     : [
         \ 'd:macros:1:0',
@@ -184,6 +186,7 @@ let g:ctrlp_cmd = 'CtrlPMixed'
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " YCM/Ultisnips compatibility
 let g:UltiSnipsExpandTrigger='<c-j>'
+let g:UltiSnipsJumpBackwardTrigger='<up>'
 let g:ycm_seed_identifiers_with_syntax = 1
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
