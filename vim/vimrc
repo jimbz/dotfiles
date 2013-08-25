@@ -229,6 +229,7 @@ autocmd FileType c,cpp,cuda setlocal foldmethod=syntax
 autocmd FileType c,cpp,cuda setlocal foldcolumn=0
 " .cuh as CUDA files
 au BufEnter,BufNew *.cuh setlocal filetype=cuda
+autocmd FileType cuda setlocal filetype=cuda.cpp
 " GCC Compiler
 compiler! gcc
 " A.vim configuration
