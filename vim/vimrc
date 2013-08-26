@@ -38,7 +38,7 @@ set nocompatible
 filetype plugin indent on
 
 " Change leader from '\' to ,
-"let mapleader = ","
+let mapleader = "\<Space>"
 
 " swap and backup files
 set directory=~/.backup//
@@ -92,6 +92,11 @@ set cursorline        " Highlight current line
 set history=100       " Remember 100 lines of commands history
 set virtualedit=block " Virtual edit in block visual mode
 set diffopt+=vertical " Vertical diff
+set scrolloff=10      " Minimum space between window border and cursor
+set nojoinspaces      " Don't put double spaces when joining lines
+
+" Toggle hlsearch
+nnoremap <Leader>h :set hlsearch!<CR>
 
 " Per-directory vimrc
 set exrc
@@ -110,7 +115,13 @@ set foldminlines=5 " Min number of lines for folding
 "set foldopen=all
 set foldnestmax=5
 
+" Recursively open current fold and only it
+nnoremap <Leader>x zxzczO
+
 "TagBar
+let g:tagbar_expand = 1
+let g:tagbar_sort = 0
+let g:tagbar_compact = 1
 noremap =<CR> :TagbarToggle<CR>
 let g:tagbar_left=1
 " -- handle CUDA as C++
@@ -219,7 +230,7 @@ let g:tex_flavor='latex'
 
 " Manual
 au filetype tex setlocal makeprg=rubber\ --pdf\ --inplace\ -f\ %;\ rubber-info\ --check\ %
-au filetype tex noremap <localleader>v :!xdg-open %<.pdf&<CR><CR>
+au filetype tex nnoremap <localleader>v :!xdg-open %<.pdf&<CR><CR>
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " C / C++ / CUDA
