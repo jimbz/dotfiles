@@ -11,25 +11,32 @@ set nocompatible
     Bundle 'gmarik/vundle'
 
     " My Bundles here:
-    " General
+    " Editor
     Bundle 'a.vim'
     Bundle 'godlygeek/tabular'
     Bundle 'tpope/vim-surround'
     Bundle 'tpope/vim-repeat'
     Bundle 'mbbill/undotree'
-    " Utils
+    Bundle 'matchit.zip'
+    Bundle 'maxbrunsfeld/vim-yankstack'
+    Bundle 'kien/rainbow_parentheses.vim'
+    Bundle 'nathanaelkane/vim-indent-guides'
+    " Files
     Bundle 'SudoEdit.vim'
     Bundle 'file-line'
-    Bundle 'tpope/vim-dispatch.git'
     Bundle 'kien/ctrlp.vim'
-    " Display
+    Bundle 'mhinz/vim-signify'
+    " Other utils
+    Bundle 'tpope/vim-dispatch.git'
     Bundle 'bling/vim-bufferline'
+    if has("unix")
+      Bundle 'Conque-Shell'
+    endif
     " Programming
     Bundle 'majutsushi/tagbar'
     Bundle 'Valloric/YouCompleteMe'
     Bundle 'SirVer/ultisnips'
     Bundle 'scrooloose/syntastic'
-    Bundle 'mhinz/vim-signify'
     " Colorschemes
     Bundle 'altercation/vim-colors-solarized'
     Bundle 'Zenburn'
@@ -37,8 +44,12 @@ set nocompatible
 " Vundle end
 filetype plugin indent on
 
+" Matchit plugin shipped with vim
+runtime! macros/matchit.vim
+
 " Change leader from '\' to ,
 let mapleader = "\<Space>"
+let maplocalleader = ","
 
 " swap and backup files
 set directory=~/.backup//
@@ -221,13 +232,8 @@ nnoremap <C-b> :b#<CR>
 " search in a single file. This will confuse Latex-Suite. Set your grep
 " program to always generate a file-name.
 set grepprg=grep\ -nH\ $*
-
-" VimLatex
-" OPTIONAL: Starting with Vim 7, the filetype of empty .tex files defaults to
-" 'plaintex' instead of 'tex', which results in vim-latex not being loaded.
-" The following changes the default filetype back to 'tex':
-let g:tex_flavor='latex'
-
+" Surround.vim support for Latex commands
+let g:surround_{char2nr('c')} = "\\\1command\1{\r}"
 " Manual
 au filetype tex setlocal makeprg=rubber\ --pdf\ --inplace\ -f\ %;\ rubber-info\ --check\ %
 au filetype tex nnoremap <localleader>v :!xdg-open %<.pdf&<CR><CR>
@@ -248,6 +254,9 @@ let g:alternateNoDefaultAlternate = 1
 let g:alternateExtensions_cu = "h,cuh"
 let g:alternateExtensions_h = "cu,c,cpp,cxx,cc,CC,cuh"
 let g:alternateExtensions_cuh = "cu,c,cpp,cxx,cc,CC,h"
+autocmd VimEnter * unmap! <Leader>ih
+autocmd VimEnter * unmap! <Leader>is
+autocmd VimEnter * unmap! <Leader>ihn
 " CUDA TagList support
 let tlist_cuda_settings= 'c++;n:namespace;v:variable;d:macro;t:typedef;' .
                              \ 'c:class;g:enum;s:struct;u:union;f:function'
