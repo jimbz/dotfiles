@@ -7,7 +7,7 @@ set nocompatible
     call vundle#rc()
 
     " let Vundle manage Vundle
-    " required! 
+    " required!
     Bundle 'gmarik/vundle'
 
     " My Bundles here:
@@ -19,8 +19,10 @@ set nocompatible
     Bundle 'mbbill/undotree'
     Bundle 'matchit.zip'
     Bundle 'maxbrunsfeld/vim-yankstack'
+    call yankstack#setup() " Needed to prevent conflict with vim-surround
     Bundle 'kien/rainbow_parentheses.vim'
     Bundle 'nathanaelkane/vim-indent-guides'
+    let g:indent_guides_start_level=2
     " Files
     Bundle 'SudoEdit.vim'
     Bundle 'file-line'
@@ -29,18 +31,30 @@ set nocompatible
     " Other utils
     Bundle 'tpope/vim-dispatch.git'
     Bundle 'bling/vim-bufferline'
-    if has("unix")
-      Bundle 'Conque-Shell'
-    endif
+    Bundle 'bling/vim-airline'
+    let g:airline_powerline_fonts = 1
+    Bundle 'edkolev/promptline.vim'
     " Programming
     Bundle 'majutsushi/tagbar'
     Bundle 'Valloric/YouCompleteMe'
     Bundle 'SirVer/ultisnips'
+    Bundle 'honza/vim-snippets'
     Bundle 'scrooloose/syntastic'
-    " Colorschemes
+    Bundle 'rhysd/vim-clang-format'
+    augroup ClangFormatSettings
+      autocmd!
+      " map to <Leader>cf in C++ code
+      autocmd FileType c,cpp,objc,cuda nnoremap <buffer><Leader>cf :<C-u>.ClangFormat<CR>
+      autocmd FileType c,cpp,objc,cuda vnoremap <buffer><Leader>cf :ClangFormat<CR>
+      " if you install vim-operator-user
+      "autocmd FileType c,cpp,objc map <buffer><Leader>x <Plug>(operator-clang-format)
+    augroup END
+
+    " Colorschemes /appearance
     Bundle 'altercation/vim-colors-solarized'
     Bundle 'Zenburn'
     Bundle 'chriskempson/base16-vim'
+    Bundle 'tomasr/molokai'
 " Vundle end
 filetype plugin indent on
 
@@ -58,6 +72,9 @@ set directory=~/.backup//
 set undofile                " Save undo's after file closes
 set undodir=~/.vim/undo     " where to save undo histories
 nmap =u :UndotreeToggle<CR>
+
+" Lines
+set lines=100
 
 " Columns
 set colorcolumn=80
@@ -121,10 +138,15 @@ set guioptions-=m
 set wildmenu
 set wildmode=longest,full
 
+" Ignore these files when completing names and in Ex
+set wildignore+=.svn,CVS,.git,*.o,*.a,*.class,*.mo,*.la,*.so,*.obj,*.swp,*.jpg,*.png,*.xpm,*.gif,*.pdf,*.bak
+" Set of file name suffixes that will be given a lower priority when it comes to matching wildcards
+set suffixes+=.old
+
 " Folding
-set foldminlines=5 " Min number of lines for folding
+set foldminlines=10 " Min number of lines for folding
 "set foldopen=all
-set foldnestmax=5
+set foldlevel=3
 
 " Recursively open current fold and only it
 nnoremap <Leader>x zxzczO
@@ -168,9 +190,6 @@ let g:tagbar_type_cuda = {
         \ 'union'     : 'u'
     \ }
 \ }
-
-" Auto close preview window
-autocmd InsertLeave * if pumvisible() == 0|pclose|endif
 
 " Wrap by word
 set wrap
@@ -241,12 +260,15 @@ au filetype tex nnoremap <localleader>v :!xdg-open %<.pdf&<CR><CR>
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " C / C++ / CUDA
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Syntax based folding
-autocmd FileType c,cpp,cuda setlocal foldmethod=syntax
-autocmd FileType c,cpp,cuda setlocal foldcolumn=0
-" .cuh as CUDA files
-au BufEnter,BufNew *.cuh setlocal filetype=cuda
-autocmd FileType cuda setlocal filetype=cuda.cpp
+augroup CudaCommands
+  autocmd!
+  " Syntax based folding
+  autocmd FileType c,cpp,cuda setlocal foldmethod=syntax
+  autocmd FileType c,cpp,cuda setlocal foldcolumn=0
+  " .cuh as CUDA files
+  autocmd BufEnter,BufNew *.cuh setlocal filetype=cuda
+  autocmd FileType cuda setlocal filetype=cuda.cpp
+augroup end
 " GCC Compiler
 compiler! gcc
 " A.vim configuration
@@ -254,9 +276,12 @@ let g:alternateNoDefaultAlternate = 1
 let g:alternateExtensions_cu = "h,cuh"
 let g:alternateExtensions_h = "cu,c,cpp,cxx,cc,CC,cuh"
 let g:alternateExtensions_cuh = "cu,c,cpp,cxx,cc,CC,h"
-autocmd VimEnter * unmap! <Leader>ih
-autocmd VimEnter * unmap! <Leader>is
-autocmd VimEnter * unmap! <Leader>ihn
+augroup AlternateFix
+  autocmd!
+  autocmd VimEnter * unmap! <Leader>ih
+  autocmd VimEnter * unmap! <Leader>is
+  autocmd VimEnter * unmap! <Leader>ihn
+augroup end
 " CUDA TagList support
 let tlist_cuda_settings= 'c++;n:namespace;v:variable;d:macro;t:typedef;' .
                              \ 'c:class;g:enum;s:struct;u:union;f:function'
