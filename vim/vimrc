@@ -31,6 +31,7 @@ set nocompatible
     Bundle 'kien/ctrlp.vim'
     Bundle 'mhinz/vim-signify'
     Bundle 'vcscommand.vim'
+    Bundle 'scrooloose/nerdtree'
     " Other utils
     Bundle 'tpope/vim-dispatch.git'
     Bundle 'bling/vim-bufferline'
@@ -43,6 +44,7 @@ set nocompatible
     Bundle 'SirVer/ultisnips'
     Bundle 'honza/vim-snippets'
     Bundle 'scrooloose/syntastic'
+    let g:syntastic_tex_chktex_args = '-n 1 -n 9 -n 15 -n 17 -n 22'
     Bundle 'tpope/vim-commentary'
     Bundle 'tpope/vim-endwise'
     Bundle 'rhysd/vim-clang-format'
@@ -53,7 +55,7 @@ set nocompatible
       autocmd FileType c,cpp,objc,cuda vnoremap <buffer><Leader>cf :ClangFormat<CR>
       " if you install vim-operator-user
       "autocmd FileType c,cpp,objc map <buffer><Leader>x <Plug>(operator-clang-format)
-    augroup END
+    augroup end
     " Colorschemes / Appearance
     Bundle 'altercation/vim-colors-solarized'
     Bundle 'Zenburn'
@@ -146,7 +148,7 @@ set wildmenu
 set wildmode=longest,full
 
 " Ignore these files when completing names and in Ex
-set wildignore+=.svn,CVS,.git,*.o,*.a,*.class,*.mo,*.la,*.so,*.obj,*.swp,*.jpg,*.png,*.xpm,*.gif,*.pdf,*.bak
+set wildignore+=.svn,CVS,.git,*.o,*.a,*.class,*.mo,*.la,*.so,*.obj,*.swp,*.jpg,*.png,*.xpm,*.gif,*.pdf,*.bak,*.aux,*.bbl
 " Set of file name suffixes that will be given a lower priority when it comes to matching wildcards
 set suffixes+=.old
 
