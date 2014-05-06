@@ -8,46 +8,42 @@ set nocompatible
 
     " let Vundle manage Vundle
     " required!
-    Bundle 'gmarik/vundle'
+    Plugin 'gmarik/vundle'
 
     " My Bundles here:
     " Editor
-    Bundle 'a.vim'
-    Bundle 'godlygeek/tabular'
-    Bundle 'tpope/vim-surround'
-    Bundle 'tpope/vim-repeat'
-    Bundle 'tpope/vim-sleuth'
-    Bundle 'mbbill/undotree'
-    Bundle 'matchit.zip'
-    Bundle 'maxbrunsfeld/vim-yankstack'
+    Plugin 'a.vim'
+    Plugin 'godlygeek/tabular'
+    Plugin 'tpope/vim-surround'
+    Plugin 'tpope/vim-repeat'
+    Plugin 'tpope/vim-sleuth'
+    Plugin 'mbbill/undotree'
+    Plugin 'matchit.zip'
+    Plugin 'maxbrunsfeld/vim-yankstack'
     call yankstack#setup() " Fix conflicts with vim-surround
-    Bundle 'kien/rainbow_parentheses.vim'
-    Bundle 'nathanaelkane/vim-indent-guides'
+    Plugin 'kien/rainbow_parentheses.vim'
+    Plugin 'nathanaelkane/vim-indent-guides'
     let g:indent_guides_start_level=2
-    Bundle 'terryma/vim-expand-region'
+    Plugin 'terryma/vim-expand-region'
     " Files
-    Bundle 'SudoEdit.vim'
-    Bundle 'file-line'
-    Bundle 'kien/ctrlp.vim'
-    Bundle 'mhinz/vim-signify'
-    Bundle 'vcscommand.vim'
-    Bundle 'scrooloose/nerdtree'
+    Plugin 'SudoEdit.vim'
+    Plugin 'file-line'
+    Plugin 'kien/ctrlp.vim'
+    Plugin 'mhinz/vim-signify'
+    Plugin 'vcscommand.vim'
+    Plugin 'scrooloose/nerdtree'
     " Other utils
-    Bundle 'tpope/vim-dispatch.git'
-    Bundle 'bling/vim-bufferline'
-    Bundle 'bling/vim-airline'
-    let g:airline_powerline_fonts = 1
-    Bundle 'edkolev/promptline.vim'
+    Plugin 'tpope/vim-dispatch.git'
     " Programming
-    Bundle 'majutsushi/tagbar'
-    Bundle 'Valloric/YouCompleteMe'
-    Bundle 'SirVer/ultisnips'
-    Bundle 'honza/vim-snippets'
-    Bundle 'scrooloose/syntastic'
+    Plugin 'majutsushi/tagbar'
+    Plugin 'Valloric/YouCompleteMe'
+    Plugin 'SirVer/ultisnips'
+    Plugin 'honza/vim-snippets'
+    Plugin 'scrooloose/syntastic'
     let g:syntastic_tex_chktex_args = '-n 1 -n 9 -n 15 -n 17 -n 22'
-    Bundle 'tpope/vim-commentary'
-    Bundle 'tpope/vim-endwise'
-    Bundle 'rhysd/vim-clang-format'
+    Plugin 'tpope/vim-commentary'
+    Plugin 'tpope/vim-endwise'
+    Plugin 'rhysd/vim-clang-format'
     augroup ClangFormatSettings
       autocmd!
       " map to <Leader>cf in C++ code
@@ -57,13 +53,14 @@ set nocompatible
       "autocmd FileType c,cpp,objc map <buffer><Leader>x <Plug>(operator-clang-format)
     augroup end
     " Colorschemes / Appearance
-    Bundle 'altercation/vim-colors-solarized'
-    Bundle 'Zenburn'
-    Bundle 'chriskempson/base16-vim'
-    Bundle 'tomasr/molokai'
-    Bundle 'bling/vim-airline'
-    Bundle 'edkolev/promptline.vim'
+    Plugin 'altercation/vim-colors-solarized'
+    Plugin 'Zenburn'
+    Plugin 'chriskempson/base16-vim'
+    Plugin 'tomasr/molokai'
+    Plugin 'bling/vim-bufferline'
+    Plugin 'bling/vim-airline'
     let g:airline_powerline_fonts = 1
+    Plugin 'edkolev/promptline.vim'
 " Vundle end
 filetype plugin indent on
 
