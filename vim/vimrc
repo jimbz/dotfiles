@@ -1,16 +1,12 @@
 set nocompatible
+filetype off " required!
+set rtp+=~/.vim/bundle/Vundle.vim/
+call vundle#begin()
 
-" Vundle
-    filetype off " required!
+" Let Vundle manage Vundle
+Plugin 'gmarik/Vundle.vim'
 
-    set rtp+=~/.vim/bundle/vundle/
-    call vundle#rc()
-
-    " let Vundle manage Vundle
-    " required!
-    Plugin 'gmarik/vundle'
-
-    " My Bundles here:
+" Plugins:
     " Editor
     Plugin 'a.vim'
     Plugin 'godlygeek/tabular'
@@ -19,8 +15,8 @@ set nocompatible
     Plugin 'tpope/vim-sleuth'
     Plugin 'mbbill/undotree'
     Plugin 'matchit.zip'
-    Plugin 'maxbrunsfeld/vim-yankstack'
-    call yankstack#setup() " Fix conflicts with vim-surround
+    "Plugin 'maxbrunsfeld/vim-yankstack'
+    "call yankstack#setup() " Fix conflicts with vim-surround
     Plugin 'kien/rainbow_parentheses.vim'
     Plugin 'nathanaelkane/vim-indent-guides'
     let g:indent_guides_start_level=2
@@ -52,6 +48,9 @@ set nocompatible
       " if you install vim-operator-user
       "autocmd FileType c,cpp,objc map <buffer><Leader>x <Plug>(operator-clang-format)
     augroup end
+    " Productivity
+    Plugin 'xolox/vim-misc'
+    Plugin 'xolox/vim-notes'
     " Colorschemes / Appearance
     Plugin 'altercation/vim-colors-solarized'
     Plugin 'Zenburn'
@@ -62,7 +61,8 @@ set nocompatible
     let g:airline_powerline_fonts = 1
     let g:airline#extensions#tabline#enabled = 1
     Plugin 'edkolev/promptline.vim'
-" Vundle end
+
+call vundle#end()
 filetype plugin indent on
 
 " Matchit plugin shipped with vim
@@ -79,12 +79,6 @@ set directory=~/.backup//
 set undofile                " Save undo's after file closes
 set undodir=~/.vim/undo     " where to save undo histories
 nmap =u :UndotreeToggle<CR>
-
-" Lines
-set lines=100
-
-" Columns
-set colorcolumn=80
 
 " Color scheme and syntax highlighting
 set background=dark
@@ -236,12 +230,13 @@ let g:ctrlp_cmd = 'CtrlPMixed'
 " YCM/Ultisnips compatibility
 let g:UltiSnipsExpandTrigger='<c-j>'
 let g:UltiSnipsJumpBackwardTrigger='<up>'
-let g:ycm_seed_identifiers_with_syntax = 1
+"let g:ycm_seed_identifiers_with_syntax = 1
 let g:ycm_complete_in_comments = 1
 let g:ycm_complete_in_strings = 1
 let g:ycm_collect_identifiers_from_comments_and_strings = 1
-let g:ycm_collect_identifiers_from_tags_files = 1
+"let g:ycm_collect_identifiers_from_tags_files = 1
 let g:ycm_filetype_blacklist = { 'tex': 1 }
+let g:ycm_confirm_extra_conf = 0
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Macros
