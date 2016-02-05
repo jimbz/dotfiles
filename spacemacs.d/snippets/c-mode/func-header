@@ -1,0 +1,15 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: pwin function header
+# key: fh
+# group: pwin
+# binding: direct-keybinding
+# --
+/***** ${1:`(current-kill 0 t)`} ${1:$(make-string (- (- fill-column 7) (string-width yas-text)) ?\*)}
+ *
+ * Description: $2
+ *
+ * Input: $4
+ *
+ * Output: $3
+ *
+ *****/$0

@@ -1,0 +1,16 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: Pwin file header
+# key: Fh
+# group: pwin
+# binding: direct-keybinding
+# --
+/*****************************************************************************
+ * File : `(file-name-nondirectory buffer-file-name)`
+ *
+ * Description : $1
+ *
+ * Author  : Jim Zin
+ * Date    : `(format-time-string "%b %d, %Y")`
+ *
+ *****************************************************************************/
+$0
