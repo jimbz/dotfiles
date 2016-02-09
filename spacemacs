@@ -39,7 +39,7 @@ values."
      version-control
      (c-c++ :variables c-c++-enable-clang-support t)
      semantic
-     cscope
+     gtags
      python
      xkcd
      )
