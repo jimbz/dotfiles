@@ -2,6 +2,16 @@
 ;; This file is loaded by Spacemacs at startup.
 ;; It must be stored in your home directory.
 
+(defun my-is-not-hidden-file (s)
+  (stringp s)
+  (when (< 0 (length s))
+    (let '(first-char (aref s 0))
+      (not (equal first-char ?\.)))))
+
+(defun my-find-layers ()
+  (let '(layers (ignore-errors (directory-files "~/.spacemacs.d/layers")))
+    (-filter 'my-is-not-hidden-file layers)))
+
 (defun dotspacemacs/layers ()
   "Configuration Layers declaration.
 You should not put any user code in this function besides modifying the variable
@@ -17,32 +27,34 @@ values."
    ;; List of configuration layers to load. If it is the symbol `all' instead
    ;; of a list then all discovered layers will be installed.
    dotspacemacs-configuration-layers
-   '(
-     ;; ----------------------------------------------------------------
-     ;; Example of useful layers you may want to use right away.
-     ;; Uncomment some layer names and press <SPC f e R> (Vim style) or
-     ;; <M-m f e R> (Emacs style) to install them.
-     ;; ----------------------------------------------------------------
-     (auto-completion :variables
-                      auto-completion-enable-help-tooltip t)
-     ;; better-defaults
-     emacs-lisp
-     git
-     github
-     markdown
-     org
-     (shell :variables
-            shell-default-height 30
-            shell-default-position 'bottom)
-     spell-checking
-     syntax-checking
-     version-control
-     (c-c++ :variables c-c++-enable-clang-support t)
-     semantic
-     gtags
-     python
-     xkcd
-     )
+   (append
+    (mapcar 'intern (my-find-layers))
+    '(
+      ;; ----------------------------------------------------------------
+      ;; Example of useful layers you may want to use right away.
+      ;; Uncomment some layer names and press <SPC f e R> (Vim style) or
+      ;; <M-m f e R> (Emacs style) to install them.
+      ;; ----------------------------------------------------------------
+      (auto-completion :variables
+                       auto-completion-enable-help-tooltip t)
+      ;; better-defaults
+      emacs-lisp
+      git
+      github
+      markdown
+      org
+      (shell :variables
+             shell-default-height 30
+             shell-default-position 'bottom)
+      spell-checking
+      syntax-checking
+      version-control
+      (c-c++ :variables c-c++-enable-clang-support t)
+      semantic
+      gtags
+      python
+      xkcd
+      ))
    ;; List of additional packages that will be installed without being
    ;; wrapped in a layer. If you need some configuration for these
    ;; packages, then consider creating a layer. You can also put the
