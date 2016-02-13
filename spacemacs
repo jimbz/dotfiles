@@ -274,8 +274,6 @@ layers configuration. You are free to put any user code."
     (setq comment-start "//")
     (setq comment-end ""))
   (add-hook 'c-mode-common-hook 'my-c-comments)
-  (setq org-agenda-files (quote ("~/org/notes.org")))
-  (c-set-offset 'case-label '+)
   )
 
 ;; Do not write anything past this comment. This is where Emacs will
