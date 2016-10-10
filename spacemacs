@@ -139,7 +139,7 @@ values."
                                 :size 14
                                 :weight normal
                                 :width normal
-                                :powerline-scale 1),
+                                :powerline-scale 1)
                                ("Source Code Pro"
                                 :size 13
                                 :weight normal
