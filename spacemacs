@@ -36,6 +36,7 @@ values."
      ;; Uncomment some layer names and press <SPC f e R> (Vim style) or
      ;; <M-m f e R> (Emacs style) to install them.
      ;; ----------------------------------------------------------------
+     sputnik
      helm
      c-c++
      semantic
@@ -57,7 +58,7 @@ values."
    ;; wrapped in a layer. If you need some configuration for these
    ;; packages, then consider creating a layer. You can also put the
    ;; configuration in `dotspacemacs/user-config'.
-   dotspacemacs-additional-packages '(dtrt-indent cmake-ide rtags)
+   dotspacemacs-additional-packages '(dtrt-indent rtags)
    ;; A list of packages that cannot be updated.
    dotspacemacs-frozen-packages '()
    ;; A list of packages that will not be installed and loaded.
@@ -170,7 +171,7 @@ values."
    ;; and TAB or <C-m> and RET.
    ;; In the terminal, these pairs are generally indistinguishable, so this only
    ;; works in the GUI. (default nil)
-   dotspacemacs-distinguish-gui-tab nil
+   dotspacemacs-distinguish-gui-tab t
    ;; If non nil `Y' is remapped to `y$' in Evil states. (default nil)
    dotspacemacs-remap-Y-to-y$ 1
    ;; If non-nil, the shift mappings `<' and `>' retain visual state if used
@@ -303,6 +304,11 @@ before packages are loaded. If you are unsure, you should try in setting them in
 `dotspacemacs/user-config' first."
   )
 
+(defun my-flycheck-rtags-setup ()
+  (flycheck-select-checker 'rtags)
+  (setq-local flycheck-highlighting-mode nil) ;; RTags creates more accurate overlays.
+  (setq-local flycheck-check-syntax-automatically nil))
+
 (defun dotspacemacs/user-config ()
   "Configuration function for user code.
 This function is called at the very end of Spacemacs initialization after
@@ -313,20 +319,28 @@ you should place your code here."
   (setq powerline-default-separator 'nil)
   ;; only run this if rtags is installed
   (when (require 'rtags nil :noerror)
+    ;; work with evil jumps
+    (add-hook 'rtags-jump-hook 'evil-set-jump)
+    (add-to-list 'spacemacs-jump-handlers-c-mode '(rtags-find-symbol-at-point :async t))
     ;; make sure you have company-mode installed
     (require 'company)
+    (require 'company-rtags)
+    (push 'company-rtags company-backends-c-mode-common)
+    (setq company-rtags-begin-after-member-access t)
+    (setq rtags-completions-enabled t)
     ;; install standard rtags keybindings. Do M-. on the symbol below to
     ;; jump to definition and see the keybindings.
     (rtags-enable-standard-keybindings c-mode-base-map)
-    ;; comment this out if you don't have or don't use helm
+    ;; use helm
     (setq rtags-use-helm t)
     ;; company completion setup
+    (require 'flycheck-rtags)
     (setq rtags-autostart-diagnostics t)
-    (setq rtags-completions-enabled t)
-    (add-hook 'rtags-jump-hook 'evil-set-jump)
-    (push 'company-rtags company-backends-c-mode-common)
-    (add-to-list 'spacemacs-jump-handlers-c-mode '(rtags-find-symbol-at-point :async t))
-    (rtags-diagnostics)))
+    (rtags-diagnostics)
+    (add-hook 'c-mode-common-hook #'my-flycheck-rtags-setup)
+    (add-hook 'c-mode-common-hook #'dtrt-indent-mode)
+    ;; (cmake-ide-setup)
+    ))
 
 ;; Do not write anything past this comment. This is where Emacs will
 ;; auto-generate custom variable definitions.
@@ -339,8 +353,10 @@ you should place your code here."
    (quote
     (rtags cmake-ide levenshtein dtrt-indent org alert log4e gntp gitignore-mode fringe-helper git-gutter+ git-gutter flyspell-correct-ivy flyspell-correct pos-tip flycheck magit magit-popup git-commit with-editor company color-theme-sanityinc-solarized yasnippet auto-complete wgrep smex ivy-hydra counsel-projectile counsel swiper ivy yapfify xterm-color xkcd ws-butler window-numbering which-key volatile-highlights vi-tilde-fringe uuidgen use-package toc-org stickyfunc-enhance srefactor spacemacs-theme spaceline solarized-theme smeargle shell-pop restart-emacs rainbow-delimiters quelpa pyvenv pytest pyenv-mode py-isort protobuf-mode popwin pip-requirements persp-mode pcre2el paradox orgit org-projectile org-present org-pomodoro org-plus-contrib org-download org-bullets open-junk-file neotree multi-term move-text mmm-mode markdown-toc magit-gitflow magit-gh-pulls macrostep lorem-ipsum live-py-mode linum-relative link-hint info+ indent-guide ido-vertical-mode hy-mode hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers highlight-indentation help-fns+ helm-themes helm-swoop helm-pydoc helm-projectile helm-mode-manager helm-make helm-gtags helm-gitignore helm-flx helm-descbinds helm-company helm-c-yasnippet helm-ag google-translate golden-ratio gnuplot github-search github-clone github-browse-file gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe git-gutter-fringe+ gist gh-md ggtags flyspell-correct-helm flycheck-ycmd flycheck-pos-tip flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu eshell-z eshell-prompt-extras esh-help elisp-slime-nav dumb-jump disaster diff-hl define-word cython-mode company-ycmd company-statistics company-quickhelp company-c-headers company-anaconda column-enforce-mode cmake-mode clean-aindent-mode clang-format auto-yasnippet auto-highlight-symbol auto-dictionary auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line ac-ispell)))
  '(paradox-github-token t)
+ '(safe-local-variable-values (quote ((checkdoc-minor-mode . 1))))
  '(split-height-threshold nil)
- '(split-width-threshold 0))
+ '(split-width-threshold 0)
+ '(yas-triggers-in-field nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
