@@ -31,6 +31,7 @@ values."
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
    '(
+     python
      ;; ----------------------------------------------------------------
      ;; Example of useful layers you may want to use right away.
      ;; Uncomment some layer names and press <SPC f e R> (Vim style) or
@@ -58,7 +59,7 @@ values."
    ;; wrapped in a layer. If you need some configuration for these
    ;; packages, then consider creating a layer. You can also put the
    ;; configuration in `dotspacemacs/user-config'.
-   dotspacemacs-additional-packages '(dtrt-indent rtags)
+   dotspacemacs-additional-packages '(dtrt-indent rtags ede-compdb)
    ;; A list of packages that cannot be updated.
    dotspacemacs-frozen-packages '()
    ;; A list of packages that will not be installed and loaded.
@@ -123,7 +124,7 @@ values."
    ;; List sizes may be nil, in which case
    ;; `spacemacs-buffer-startup-lists-length' takes effect.
    ;; (default nil)
-   dotspacemacs-startup-lists '()
+   dotspacemacs-startup-lists '(recents)
    ;; True if the home buffer should respond to resize events.
    dotspacemacs-startup-buffer-responsive t
    ;; Default major mode of the scratch buffer (default `text-mode')
@@ -190,7 +191,7 @@ values."
    dotspacemacs-display-default-layout nil
    ;; If non nil then the last auto saved layouts are resume automatically upon
    ;; start. (default nil)
-   dotspacemacs-auto-resume-layouts nil
+   dotspacemacs-auto-resume-layouts t
    ;; Size (in MB) above which spacemacs will prompt to open the large file
    ;; literally to avoid performance issues. Opening a file literally means that
    ;; no major mode or minor modes are active. (default is 1)
@@ -267,7 +268,7 @@ values."
    dotspacemacs-folding-method 'evil
    ;; If non-nil smartparens-strict-mode will be enabled in programming modes.
    ;; (default nil)
-   dotspacemacs-smartparens-strict-mode nil
+   dotspacemacs-smartparens-strict-mode t
    ;; If non-nil pressing the closing parenthesis `)' key in insert mode passes
    ;; over any automatically added closing parenthesis, bracket, quote, etc…
    ;; This can be temporary disabled by pressing `C-q' before `)'. (default nil)
@@ -309,6 +310,34 @@ before packages are loaded. If you are unsure, you should try in setting them in
   (setq-local flycheck-highlighting-mode nil) ;; RTags creates more accurate overlays.
   (setq-local flycheck-check-syntax-automatically nil))
 
+(defun flycheck-compdb-setup ()
+  (when (and ede-object (oref ede-object compilation))
+    (let* ((comp (oref ede-object compilation))
+           (cmd (get-command-line comp)))
+
+      ;; Configure flycheck clang checker.
+      ;; TODO: configure gcc checker also
+      (when (string-match " -std=\\([^ ]+\\)" cmd)
+        (setq-local flycheck-clang-language-standard (match-string 1 cmd)))
+      (when (string-match " -stdlib=\\([^ ]+\\)" cmd)
+        (setq-local flycheck-clang-standard-library (match-string 1 cmd)))
+      (when (string-match " -fms-extensions " cmd)
+        (setq-local flycheck-clang-ms-extensions t))
+      (when (string-match " -fno-exceptions " cmd)
+        (setq-local flycheck-clang-no-exceptions t))
+      (when (string-match " -fno-rtti " cmd)
+        (setq-local flycheck-clang-no-rtti t))
+      (when (string-match " -fblocks " cmd)
+        (setq-local flycheck-clang-blocks t))
+      (setq-local flycheck-clang-includes (get-includes comp))
+      (setq-local flycheck-clang-definitions (get-defines comp))
+      (setq-local flycheck-clang-include-path (get-include-path comp t))
+      )))
+
+(defun my-jump-handler()
+  (evil-set-jump)
+  (semantic-ia-fast-jump))
+
 (defun dotspacemacs/user-config ()
   "Configuration function for user code.
 This function is called at the very end of Spacemacs initialization after
@@ -317,30 +346,44 @@ This is the place where most of your configurations should be done. Unless it is
 explicitly specified that a variable should be set before a package is loaded,
 you should place your code here."
   (setq powerline-default-separator 'nil)
+
+  ;; Semantic / EDE
+  (require 'ede-compdb)
+  (push 'company-semantic company-backends-c-mode-common)
+  ;; (add-to-list 'spacemacs-jump-handlers-c-mode 'semantic-ia-fast-jump)
+  (add-to-list 'spacemacs-jump-handlers-c-mode 'my-jump-handler)
+  (add-hook 'ede-compdb-project-rescan-hook #'flycheck-compdb-setup)
+  (add-hook 'ede-minor-mode-hook #'flycheck-compdb-setup)
+  (add-hook 'ede-minor-mode-hook (lambda ()
+                                   (setq company-c-headers-path-system 'ede-object-system-include-path)))
+  (global-ede-mode t)
+
   ;; only run this if rtags is installed
-  (when (require 'rtags nil :noerror)
-    ;; work with evil jumps
-    (add-hook 'rtags-jump-hook 'evil-set-jump)
-    (add-to-list 'spacemacs-jump-handlers-c-mode '(rtags-find-symbol-at-point :async t))
-    ;; make sure you have company-mode installed
-    (require 'company)
-    (require 'company-rtags)
-    (push 'company-rtags company-backends-c-mode-common)
-    (setq company-rtags-begin-after-member-access t)
-    (setq rtags-completions-enabled t)
-    ;; install standard rtags keybindings. Do M-. on the symbol below to
-    ;; jump to definition and see the keybindings.
-    (rtags-enable-standard-keybindings c-mode-base-map)
-    ;; use helm
-    (setq rtags-use-helm t)
-    ;; company completion setup
-    (require 'flycheck-rtags)
-    (setq rtags-autostart-diagnostics t)
-    (rtags-diagnostics)
-    (add-hook 'c-mode-common-hook #'my-flycheck-rtags-setup)
-    (add-hook 'c-mode-common-hook #'dtrt-indent-mode)
-    ;; (cmake-ide-setup)
-    ))
+  ;; (when (require 'rtags nil :noerror)
+  ;;   ;; work with evil jumps
+  ;;   (add-hook 'rtags-jump-hook 'evil-set-jump)
+  ;;   (add-to-list 'spacemacs-jump-handlers-c-mode '(rtags-find-symbol-at-point :async t))
+  ;;   ;; make sure you have company-mode installed
+  ;;   (require 'company)
+  ;;   (require 'company-rtags)
+  ;;   (require 'rtags-helm)
+  ;;   (push 'company-rtags company-backends-c-mode-common)
+  ;;   (setq company-rtags-begin-after-member-access t)
+  ;;   (setq rtags-completions-enabled t)
+  ;;   ;; install standard rtags keybindings. Do M-. on the symbol below to
+  ;;   ;; jump to definition and see the keybindings.
+  ;;   (rtags-enable-standard-keybindings c-mode-base-map)
+  ;;   ;; use helm
+  ;;   (setq rtags-use-helm t)
+  ;;   ;; company completion setup
+  ;;   (require 'flycheck-rtags)
+  ;;   (setq rtags-autostart-diagnostics t)
+  ;;   (rtags-diagnostics)
+  ;;   (add-hook 'c-mode-common-hook #'my-flycheck-rtags-setup)
+  ;;   (add-hook 'c-mode-common-hook #'dtrt-indent-mode)
+  ;;   ;; (cmake-ide-setup)
+  ;;   )
+  )
 
 ;; Do not write anything past this comment. This is where Emacs will
 ;; auto-generate custom variable definitions.
@@ -351,9 +394,35 @@ you should place your code here."
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (rtags cmake-ide levenshtein dtrt-indent org alert log4e gntp gitignore-mode fringe-helper git-gutter+ git-gutter flyspell-correct-ivy flyspell-correct pos-tip flycheck magit magit-popup git-commit with-editor company color-theme-sanityinc-solarized yasnippet auto-complete wgrep smex ivy-hydra counsel-projectile counsel swiper ivy yapfify xterm-color xkcd ws-butler window-numbering which-key volatile-highlights vi-tilde-fringe uuidgen use-package toc-org stickyfunc-enhance srefactor spacemacs-theme spaceline solarized-theme smeargle shell-pop restart-emacs rainbow-delimiters quelpa pyvenv pytest pyenv-mode py-isort protobuf-mode popwin pip-requirements persp-mode pcre2el paradox orgit org-projectile org-present org-pomodoro org-plus-contrib org-download org-bullets open-junk-file neotree multi-term move-text mmm-mode markdown-toc magit-gitflow magit-gh-pulls macrostep lorem-ipsum live-py-mode linum-relative link-hint info+ indent-guide ido-vertical-mode hy-mode hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers highlight-indentation help-fns+ helm-themes helm-swoop helm-pydoc helm-projectile helm-mode-manager helm-make helm-gtags helm-gitignore helm-flx helm-descbinds helm-company helm-c-yasnippet helm-ag google-translate golden-ratio gnuplot github-search github-clone github-browse-file gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe git-gutter-fringe+ gist gh-md ggtags flyspell-correct-helm flycheck-ycmd flycheck-pos-tip flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu eshell-z eshell-prompt-extras esh-help elisp-slime-nav dumb-jump disaster diff-hl define-word cython-mode company-ycmd company-statistics company-quickhelp company-c-headers company-anaconda column-enforce-mode cmake-mode clean-aindent-mode clang-format auto-yasnippet auto-highlight-symbol auto-dictionary auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line ac-ispell)))
+    (ede-compdb packed evil avy powerline spinner hydra projectile bind-key bind-map highlight request anzu iedit smartparens undo-tree helm helm-core dash async hide-comnt anaconda-mode pythonic rtags cmake-ide levenshtein dtrt-indent org alert log4e gntp gitignore-mode fringe-helper git-gutter+ git-gutter flyspell-correct-ivy flyspell-correct pos-tip flycheck magit magit-popup git-commit with-editor company color-theme-sanityinc-solarized yasnippet auto-complete wgrep smex ivy-hydra counsel-projectile counsel swiper ivy yapfify xterm-color xkcd ws-butler window-numbering which-key volatile-highlights vi-tilde-fringe uuidgen use-package toc-org stickyfunc-enhance srefactor spacemacs-theme spaceline solarized-theme smeargle shell-pop restart-emacs rainbow-delimiters quelpa pyvenv pytest pyenv-mode py-isort protobuf-mode popwin pip-requirements persp-mode pcre2el paradox orgit org-projectile org-present org-pomodoro org-plus-contrib org-download org-bullets open-junk-file neotree multi-term move-text mmm-mode markdown-toc magit-gitflow magit-gh-pulls macrostep lorem-ipsum live-py-mode linum-relative link-hint info+ indent-guide ido-vertical-mode hy-mode hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers highlight-indentation help-fns+ helm-themes helm-swoop helm-pydoc helm-projectile helm-mode-manager helm-make helm-gtags helm-gitignore helm-flx helm-descbinds helm-company helm-c-yasnippet helm-ag google-translate golden-ratio gnuplot github-search github-clone github-browse-file gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe git-gutter-fringe+ gist gh-md ggtags flyspell-correct-helm flycheck-ycmd flycheck-pos-tip flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu eshell-z eshell-prompt-extras esh-help elisp-slime-nav dumb-jump disaster diff-hl define-word cython-mode company-ycmd company-statistics company-quickhelp company-c-headers company-anaconda column-enforce-mode cmake-mode clean-aindent-mode clang-format auto-yasnippet auto-highlight-symbol auto-dictionary auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line ac-ispell)))
  '(paradox-github-token t)
  '(safe-local-variable-values (quote ((checkdoc-minor-mode . 1))))
+ '(split-height-threshold nil)
+ '(split-width-threshold 0)
+ '(yas-triggers-in-field nil t))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
+(defun dotspacemacs/emacs-custom-settings ()
+  "Emacs custom settings.
+This is an auto-generated function, do not modify its content directly, use
+Emacs customize menu instead.
+This function is called at the very end of Spacemacs initialization."
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(evil-want-Y-yank-to-eol 1)
+ '(package-selected-packages
+   (quote
+    (winum helm-purpose window-purpose imenu-list fuzzy ede-compdb packed evil avy powerline spinner hydra projectile bind-key bind-map highlight request anzu iedit smartparens undo-tree helm helm-core dash async hide-comnt anaconda-mode pythonic rtags cmake-ide levenshtein dtrt-indent org alert log4e gntp gitignore-mode fringe-helper git-gutter+ git-gutter flyspell-correct-ivy flyspell-correct pos-tip flycheck magit magit-popup git-commit with-editor company color-theme-sanityinc-solarized yasnippet auto-complete wgrep smex ivy-hydra counsel-projectile counsel swiper ivy yapfify xterm-color xkcd ws-butler window-numbering which-key volatile-highlights vi-tilde-fringe uuidgen use-package toc-org stickyfunc-enhance srefactor spacemacs-theme spaceline solarized-theme smeargle shell-pop restart-emacs rainbow-delimiters quelpa pyvenv pytest pyenv-mode py-isort protobuf-mode popwin pip-requirements persp-mode pcre2el paradox orgit org-projectile org-present org-pomodoro org-plus-contrib org-download org-bullets open-junk-file neotree multi-term move-text mmm-mode markdown-toc magit-gitflow magit-gh-pulls macrostep lorem-ipsum live-py-mode linum-relative link-hint info+ indent-guide ido-vertical-mode hy-mode hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers highlight-indentation help-fns+ helm-themes helm-swoop helm-pydoc helm-projectile helm-mode-manager helm-make helm-gtags helm-gitignore helm-flx helm-descbinds helm-company helm-c-yasnippet helm-ag google-translate golden-ratio gnuplot github-search github-clone github-browse-file gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe git-gutter-fringe+ gist gh-md ggtags flyspell-correct-helm flycheck-ycmd flycheck-pos-tip flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu eshell-z eshell-prompt-extras esh-help elisp-slime-nav dumb-jump disaster diff-hl define-word cython-mode company-ycmd company-statistics company-quickhelp company-c-headers company-anaconda column-enforce-mode cmake-mode clean-aindent-mode clang-format auto-yasnippet auto-highlight-symbol auto-dictionary auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line ac-ispell)))
+ '(paradox-github-token t)
+ '(safe-local-variable-values (quote ((checkdoc-minor-mode . 1))))
+ '(semantic-symref-tool (quote global))
  '(split-height-threshold nil)
  '(split-width-threshold 0)
  '(yas-triggers-in-field nil))
@@ -363,3 +432,4 @@ you should place your code here."
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  )
+)
