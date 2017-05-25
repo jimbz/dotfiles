@@ -9,18 +9,25 @@ endif
 call plug#begin('~/.local/share/nvim/plugged')
 
 " -- Misc
-Plug 'Shougo/denite.nvim', { 'do': ':UpdateRemotePlugins' }
 Plug 'airblade/vim-rooter', { 'do': ':UpdateRemotePlugins' }
 Plug 'b4winckler/vim-angry'
 Plug 'jceb/vim-orgmode'
+Plug 'jiangmiao/auto-pairs'
 Plug 'junegunn/vim-easy-align'
 " Plug 'justinmk/vim-sneak'
+Plug 'mtth/scratch.vim'
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-sensible'
 Plug 'tpope/vim-sleuth'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-abolish'
+
+" -- Denite
+Plug 'Shougo/denite.nvim', { 'do': ':UpdateRemotePlugins' }
+Plug 'ozelentok/denite-gtags'
+Plug 'chemzqm/vim-easygit'
+Plug 'chemzqm/denite-git'
 
 " -- Git
 Plug 'tpope/vim-fugitive'
@@ -43,12 +50,20 @@ Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 Plug 'neomake/neomake'
 
 let g:deoplete#enable_at_startup = 1
+let g:neomake_open_list = 2
 
 let g:clang_complete_auto = 0
 let g:clang_auto_select = 0
 let g:clang_omnicppcomplete_compliance = 0
 let g:clang_make_default_keymappings = 0
-let g:clang_library_path = '/usr/local/opt/llvm/lib/'
+if len(glob('/usr/local/opt/llvm/lib/'))
+  let g:clang_library_path = '/usr/local/opt/llvm/lib/'
+elseif len(glob('/usr/lib/llvm-3.8/lib/'))
+  let g:clang_library_path = '/usr/lib/llvm-3.8/lib/'
+endif
+
+" -- Highlighting
+Plug 'sheerun/vim-polyglot'
 
 " -- Colorschemes
 Plug 'altercation/vim-colors-solarized'
@@ -69,12 +84,24 @@ colorscheme NeoSolarized
 set exrc
 set cino=(0
 set wildmode=longest:full,full
+set mouse=a
+set hidden
+nnoremap <C-l> :noh<CR><C-l>
 
 " Search
 set inccommand=split
 set ignorecase smartcase
 nnoremap / :noh<CR>/
+" -- Ag command on grep source
+call denite#custom#var('grep', 'command', ['ag'])
+call denite#custom#var('grep', 'default_opts',
+      \ ['-i', '--vimgrep'])
+call denite#custom#var('grep', 'recursive_opts', [])
+call denite#custom#var('grep', 'pattern_opt', [])
+call denite#custom#var('grep', 'separator', ['--'])
+call denite#custom#var('grep', 'final_opts', [])
 
+" Automake
 function! SetAutoMake(val)
     augroup automake
         au!
@@ -102,10 +129,34 @@ nnoremap <Leader>7 :7wincmd w<CR>
 nnoremap <Leader>8 :8wincmd w<CR>
 nnoremap <Leader>9 :9wincmd w<CR>
 
+tnoremap <A-h> <C-\><C-N><C-w>h
+tnoremap <A-j> <C-\><C-N><C-w>j
+tnoremap <A-k> <C-\><C-N><C-w>k
+tnoremap <A-l> <C-\><C-N><C-w>l
+inoremap <A-h> <C-\><C-N><C-w>h
+inoremap <A-j> <C-\><C-N><C-w>j
+inoremap <A-k> <C-\><C-N><C-w>k
+inoremap <A-l> <C-\><C-N><C-w>l
+nnoremap <A-h> <C-w>h
+nnoremap <A-j> <C-w>j
+nnoremap <A-k> <C-w>k
+nnoremap <A-l> <C-w>l
+
+augroup quickfix
+  au!
+  " This trigger takes advantage of the fact that the quickfix window can be
+  " easily distinguished by its file-type, qf. The wincmd J command is
+  " equivalent to the Ctrl+W, Shift+J shortcut telling Vim to move a window to
+  " the very bottom (see :help :wincmd and :help ^WJ).
+  au FileType qf wincmd J
+augroup END
+
 " Tags
 set csprg=gtags-cscope
-noremap =t :!global -u<CR>
-nnoremap <Leader>G :cstag 
+noremap =t :NeomakeSh! global -u<CR>
+nnoremap <Leader>G :Denite -buffer-name=gtags_completion gtags_completion<CR>
+nnoremap <Leader>d :DeniteCursorWord -buffer-name=gtags_context gtags_context<CR>
+nnoremap <Leader>D :DeniteCursorWord -buffer-name=gtags_ref gtags_ref<CR>
 nnoremap <Leader>g :Tagbar<CR>
 
 " Denite
@@ -129,8 +180,7 @@ call denite#custom#map(
       \)
 
 " Terminal
-set splitbelow splitright
-nnoremap <Leader>t :10new +terminal<CR>
-nnoremap <Leader>T :vnew +terminal<CR>
+nnoremap <Leader>t :below 10new +terminal<CR>
+nnoremap <Leader>T :below vnew +terminal<CR>
 
 set secure
