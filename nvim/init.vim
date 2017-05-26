@@ -76,7 +76,9 @@ call plug#end()
 let mapleader=" "
 
 " Colorscheme
-set termguicolors
+if($TERM != 'screen')
+  set termguicolors
+endif
 set background=dark
 colorscheme NeoSolarized
 
@@ -163,8 +165,8 @@ nnoremap <Leader>g :Tagbar<CR>
 nnoremap <Leader>f :Denite file_rec<CR>
 nnoremap <Leader>r :Denite file_old<CR>
 nnoremap <Leader>b :Denite buffer<CR>
-nnoremap <Leader>o :Denite outline<CR>
-nnoremap <Leader>l :Denite line<CR>
+nnoremap <Leader>o :Denite -auto-preview outline<CR>
+nnoremap <Leader>l :Denite -auto-preview line<CR>
 nnoremap <Leader><Leader> :Denite 
 call denite#custom#map(
       \ 'insert',
