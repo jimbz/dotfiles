@@ -88,7 +88,7 @@ set cino=(0
 set wildmode=longest:full,full
 set mouse=a
 set hidden
-nnoremap <C-l> :noh<CR><C-l>
+set nohls
 
 " From defaults.vim
 augroup vimStartup
@@ -117,6 +117,7 @@ endif
 set inccommand=split
 set ignorecase smartcase
 nnoremap / :noh<CR>/
+nnoremap <Leader>/ :Denite -auto-preview grep<CR>
 " -- Ag command on grep source
 call denite#custom#var('grep', 'command', ['ag'])
 call denite#custom#var('grep', 'default_opts',
@@ -181,6 +182,7 @@ set csprg=gtags-cscope
 noremap =t :NeomakeSh! global -u<CR>
 nnoremap <Leader>G :Denite -buffer-name=gtags_completion gtags_completion<CR>
 nnoremap <Leader>d :DeniteCursorWord -buffer-name=gtags_context gtags_context<CR>
+nnoremap gd :DeniteCursorWord -immediately -buffer-name=gtags_context gtags_context<CR>
 nnoremap <Leader>D :DeniteCursorWord -buffer-name=gtags_ref gtags_ref<CR>
 nnoremap <Leader>g :Tagbar<CR>
 
