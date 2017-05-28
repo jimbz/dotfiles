@@ -22,6 +22,7 @@ Plug 'tpope/vim-sensible'
 Plug 'tpope/vim-sleuth'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-abolish'
+Plug 'vim-scripts/a.vim'
 
 " -- Denite
 Plug 'Shougo/denite.nvim', { 'do': ':UpdateRemotePlugins' }
