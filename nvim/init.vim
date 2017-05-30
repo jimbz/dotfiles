@@ -46,17 +46,36 @@ Plug 'vim-airline/vim-airline-themes'
 let g:airline_theme='solarized'
 
 " -- Autocomplete / lint
-Plug 'Rip-Rip/clang_complete'
+" Plug 'Rip-Rip/clang_complete'
+Plug 'tweekmonster/deoplete-clang2', { 'do': ':UpdateRemotePlugins' }
 Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 Plug 'neomake/neomake'
 
 let g:deoplete#enable_at_startup = 1
 let g:neomake_open_list = 2
 
+function! OnNeomakeJobFinished() abort
+  let context = g:neomake_hook_context
+  if context.jobinfo.exit_code != 0
+    echoh WarningMsg
+    echom printf('The job for maker %s exited non-zero: %s',
+    \ context.jobinfo.maker.name, context.jobinfo.exit_code)
+    echoh None
+  else
+    echom printf('The job for maker %s exited zero: %s',
+    \ context.jobinfo.maker.name, context.jobinfo.exit_code)
+  endif
+endfunction
+augroup my_neomake_hooks
+    au!
+    autocmd User NeomakeJobFinished call OnNeomakeJobFinished()
+augroup END
+
 let g:clang_complete_auto = 0
 let g:clang_auto_select = 0
 let g:clang_omnicppcomplete_compliance = 0
 let g:clang_make_default_keymappings = 0
+let g:clang_auto_user_options = '.clang_complete, compile_commands.json'
 if len(glob('/usr/local/opt/llvm/lib/'))
   let g:clang_library_path = '/usr/local/opt/llvm/lib/'
 elseif len(glob('/usr/lib/llvm-3.8/lib/'))
@@ -115,10 +134,11 @@ if !exists(":DiffOrig")
 endif
 
 " Search
-set inccommand=split
+set inccommand=nosplit
 set ignorecase smartcase
 nnoremap / :noh<CR>/
 nnoremap <Leader>/ :Denite -auto-preview grep<CR>
+nnoremap <Leader>* :DeniteCursorWord -auto-preview grep<CR>
 " -- Ag command on grep source
 call denite#custom#var('grep', 'command', ['ag'])
 call denite#custom#var('grep', 'default_opts',
@@ -146,6 +166,7 @@ nnoremap <Leader>M :call SetAutoMake(0)<CR>
 
 " Windows
 nnoremap <Leader><Tab> <C-^>
+nnoremap <Leader>w <C-w>
 nnoremap <Leader>1 :1wincmd w<CR>
 nnoremap <Leader>2 :2wincmd w<CR>
 nnoremap <Leader>3 :3wincmd w<CR>
@@ -210,5 +231,10 @@ call denite#custom#map(
 " Terminal
 nnoremap <Leader>t :below 10new +terminal<CR>
 nnoremap <Leader>T :below vnew +terminal<CR>
+augroup terminal
+  au!
+  autocmd BufWinEnter,WinEnter term://* startinsert
+  autocmd BufLeave term://* stopinsert
+augroup END
 
 set secure
