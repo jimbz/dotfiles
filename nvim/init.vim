@@ -8,6 +8,9 @@ endif
 " Specify a directory for plugins (for Neovim: ~/.local/share/nvim/plugged)
 call plug#begin('~/.local/share/nvim/plugged')
 
+" Leader
+let mapleader=" "
+
 " -- Misc
 Plug 'airblade/vim-rooter', { 'do': ':UpdateRemotePlugins' }
 Plug 'b4winckler/vim-angry'
@@ -15,6 +18,9 @@ Plug 'jceb/vim-orgmode'
 Plug 'jiangmiao/auto-pairs'
 Plug 'junegunn/vim-easy-align'
 " Plug 'justinmk/vim-sneak'
+Plug 'kana/vim-altr'
+nmap <Leader>a <Plug>(altr-forward)
+nmap <Leader>A <Plug>(altr-back)
 Plug 'mtth/scratch.vim'
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-repeat'
@@ -22,13 +28,16 @@ Plug 'tpope/vim-sensible'
 Plug 'tpope/vim-sleuth'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-abolish'
-Plug 'vim-scripts/a.vim'
 
 " -- Denite
 Plug 'Shougo/denite.nvim', { 'do': ':UpdateRemotePlugins' }
 Plug 'ozelentok/denite-gtags'
 Plug 'chemzqm/vim-easygit'
 Plug 'chemzqm/denite-git'
+
+" -- FZF
+Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+Plug 'junegunn/fzf.vim'
 
 " -- Git
 Plug 'tpope/vim-fugitive'
@@ -46,35 +55,30 @@ Plug 'vim-airline/vim-airline-themes'
 let g:airline_theme='solarized'
 
 " -- Autocomplete / lint
-" Plug 'Rip-Rip/clang_complete'
-Plug 'tweekmonster/deoplete-clang2', { 'do': ':UpdateRemotePlugins' }
-Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-Plug 'neomake/neomake'
-
-let g:deoplete#enable_at_startup = 1
-let g:neomake_open_list = 2
-
-function! OnNeomakeJobFinished() abort
-  let context = g:neomake_hook_context
-  if context.jobinfo.exit_code != 0
-    echoh WarningMsg
-    echom printf('The job for maker %s exited non-zero: %s',
-    \ context.jobinfo.maker.name, context.jobinfo.exit_code)
-    echoh None
-  else
-    echom printf('The job for maker %s exited zero: %s',
-    \ context.jobinfo.maker.name, context.jobinfo.exit_code)
-  endif
-endfunction
-augroup my_neomake_hooks
-    au!
-    autocmd User NeomakeJobFinished call OnNeomakeJobFinished()
-augroup END
-
-let g:clang_complete_auto = 0
-let g:clang_auto_select = 0
-let g:clang_omnicppcomplete_compliance = 0
-let g:clang_make_default_keymappings = 0
+Plug 'roxma/nvim-completion-manager'
+inoremap <expr> <CR> (pumvisible() ? "\<c-y>\<cr>" : "\<CR>")
+Plug 'w0rp/ale'
+call ale#linter#Define('c', {
+      \ 'name': 'clangcheck',
+      \ 'output_stream': 'stderr',
+      \ 'executable': 'clang-check',
+      \ 'command': 'clang-check %s',
+      \ 'callback': 'ale#handlers#gcc#HandleGCCFormat',
+      \ 'lint_file': 1,
+      \})
+call ale#linter#Define('cpp', {
+      \ 'name': 'clangcheck',
+      \ 'output_stream': 'stderr',
+      \ 'executable': 'clang-check',
+      \ 'command': 'clang-check %s',
+      \ 'callback': 'ale#handlers#gcc#HandleGCCFormat',
+      \ 'lint_file': 1,
+      \})
+let g:ale_linters = {
+      \   'c': ['clangcheck', 'clangtidy'],
+      \   'cpp': ['clangcheck', 'clangtidy'],
+      \}
+Plug 'roxma/clang_complete'
 let g:clang_auto_user_options = '.clang_complete, compile_commands.json'
 if len(glob('/usr/local/opt/llvm/lib/'))
   let g:clang_library_path = '/usr/local/opt/llvm/lib/'
@@ -92,9 +96,6 @@ Plug 'iCyMind/NeoSolarized'
 " Initialize plugin system
 call plug#end()
 
-" Leader
-let mapleader=" "
-
 " Colorscheme
 if(match($TERM, 'screen') < 0)
   set termguicolors
@@ -109,6 +110,7 @@ set wildmode=longest:full,full
 set mouse=a
 set hidden
 set nohls
+set noshowmode
 
 " From defaults.vim
 augroup vimStartup
@@ -137,32 +139,6 @@ endif
 set inccommand=nosplit
 set ignorecase smartcase
 nnoremap / :noh<CR>/
-nnoremap <Leader>/ :Denite -auto-preview grep<CR>
-nnoremap <Leader>* :DeniteCursorWord -auto-preview grep<CR>
-" -- Ag command on grep source
-call denite#custom#var('grep', 'command', ['ag'])
-call denite#custom#var('grep', 'default_opts',
-      \ ['-i', '--vimgrep'])
-call denite#custom#var('grep', 'recursive_opts', [])
-call denite#custom#var('grep', 'pattern_opt', [])
-call denite#custom#var('grep', 'separator', ['--'])
-call denite#custom#var('grep', 'final_opts', [])
-
-" Automake
-function! SetAutoMake(val)
-    augroup automake
-        au!
-        if(a:val)
-            echo 'Enable auto make'
-            au BufWritePost * Neomake!
-        else
-            echo 'Disable auto make'
-        endif
-    augroup END
-endfunction
-
-nnoremap <Leader>m :call SetAutoMake(1)<CR>
-nnoremap <Leader>M :call SetAutoMake(0)<CR>
 
 " Windows
 nnoremap <Leader><Tab> <C-^>
@@ -190,7 +166,7 @@ nnoremap <A-j> <C-w>j
 nnoremap <A-k> <C-w>k
 nnoremap <A-l> <C-w>l
 
-augroup quickfix
+augroup my_quickfix
   au!
   " This trigger takes advantage of the fact that the quickfix window can be
   " easily distinguished by its file-type, qf. The wincmd J command is
@@ -201,19 +177,41 @@ augroup END
 
 " Tags
 set csprg=gtags-cscope
-noremap =t :NeomakeSh! global -u<CR>
+noremap =t :silent !global -u<CR>
 nnoremap <Leader>G :Denite -buffer-name=gtags_completion gtags_completion<CR>
 nnoremap <Leader>d :DeniteCursorWord -buffer-name=gtags_context gtags_context<CR>
-nnoremap gd :DeniteCursorWord -immediately -buffer-name=gtags_context gtags_context<CR>
 nnoremap <Leader>D :DeniteCursorWord -buffer-name=gtags_ref gtags_ref<CR>
 nnoremap <Leader>g :Tagbar<CR>
+nnoremap gd :DeniteCursorWord -immediately -buffer-name=gtags_context gtags_context<CR>
+augroup my_c_cpp
+  au!
+  au FileType c,cpp  nmap <buffer> gd <Plug>(clang_complete_goto_declaration)
+augroup END
 
-" Denite
-nnoremap <Leader>f :Denite file_rec<CR>
-nnoremap <Leader>r :Denite file_old<CR>
-nnoremap <Leader>b :Denite buffer<CR>
-nnoremap <Leader>o :Denite -auto-preview outline<CR>
-nnoremap <Leader>l :Denite -auto-preview line<CR>
+" Denite / FZF
+nnoremap <Leader>f :Files<CR>
+" nnoremap <Leader>f :Denite file_rec<CR>
+nnoremap <Leader>r :History<CR>
+" nnoremap <Leader>r :Denite file_old<CR>
+nnoremap <Leader>b :Buffers<CR>
+" nnoremap <Leader>b :Denite buffer<CR>
+nnoremap <Leader>o :BTags<CR>
+" nnoremap <Leader>o :Denite -auto-preview outline<CR>
+nnoremap <Leader>l :BLines<CR>
+" nnoremap <Leader>l :Denite -auto-preview line<CR>
+
+nnoremap <Leader>/ :Ag<CR>
+" nnoremap <Leader>/ :Denite -auto-preview grep<CR>
+nnoremap <Leader>* :Ag <C-R><C-W><CR>
+" nnoremap <Leader>* :DeniteCursorWord -auto-preview grep<CR>
+" call denite#custom#var('grep', 'command', ['ag'])
+" call denite#custom#var('grep', 'default_opts',
+"       \ ['-i', '--vimgrep'])
+" call denite#custom#var('grep', 'recursive_opts', [])
+" call denite#custom#var('grep', 'pattern_opt', [])
+" call denite#custom#var('grep', 'separator', ['--'])
+" call denite#custom#var('grep', 'final_opts', [])
+
 nnoremap <Leader><Leader> :Denite 
 call denite#custom#map(
       \ 'insert',
@@ -231,7 +229,7 @@ call denite#custom#map(
 " Terminal
 nnoremap <Leader>t :below 10new +terminal<CR>
 nnoremap <Leader>T :below vnew +terminal<CR>
-augroup terminal
+augroup my_terminal
   au!
   autocmd BufWinEnter,WinEnter term://* startinsert
   autocmd BufLeave term://* stopinsert
