@@ -55,25 +55,12 @@ Plug 'vim-airline/vim-airline-themes'
 let g:airline_theme='solarized'
 
 " -- Autocomplete / lint
+Plug 'skywind3000/asyncrun.vim'
+command! Make copen | wincmd p | AsyncRun -program=make -save=2
+nnoremap <Leader>m :Make<CR>
 Plug 'roxma/nvim-completion-manager'
 inoremap <expr> <CR> (pumvisible() ? "\<c-y>\<cr>" : "\<CR>")
 Plug 'w0rp/ale'
-call ale#linter#Define('c', {
-      \ 'name': 'clangcheck',
-      \ 'output_stream': 'stderr',
-      \ 'executable': 'clang-check',
-      \ 'command': 'clang-check %s',
-      \ 'callback': 'ale#handlers#gcc#HandleGCCFormat',
-      \ 'lint_file': 1,
-      \})
-call ale#linter#Define('cpp', {
-      \ 'name': 'clangcheck',
-      \ 'output_stream': 'stderr',
-      \ 'executable': 'clang-check',
-      \ 'command': 'clang-check %s',
-      \ 'callback': 'ale#handlers#gcc#HandleGCCFormat',
-      \ 'lint_file': 1,
-      \})
 let g:ale_linters = {
       \   'c': ['clangcheck', 'clangtidy'],
       \   'cpp': ['clangcheck', 'clangtidy'],
@@ -109,8 +96,12 @@ set cino=(0
 set wildmode=longest:full,full
 set mouse=a
 set hidden
-set nohls
 set noshowmode
+
+augroup my_au
+  au!
+  autocmd BufEnter,FocusGained * checktime
+augroup END
 
 " From defaults.vim
 augroup vimStartup
@@ -139,6 +130,13 @@ endif
 set inccommand=nosplit
 set ignorecase smartcase
 nnoremap / :noh<CR>/
+nnoremap <C-A-a> ?^\S<CR>
+inoremap <C-A-a> ?^\S<CR>
+noremap! <expr> <Plug>(StopHL) execute('nohlsearch')[-1]
+augroup my_hls
+  au!
+  au InsertEnter * call feedkeys("\<Plug>(StopHL)", "m")
+augroup END
 
 " Windows
 nnoremap <Leader><Tab> <C-^>
@@ -166,6 +164,13 @@ nnoremap <A-j> <C-w>j
 nnoremap <A-k> <C-w>k
 nnoremap <A-l> <C-w>l
 
+tnoremap <A-End> <C-\><C-N>gt
+tnoremap <A-Home> <C-\><C-N>gT
+inoremap <A-End> gt
+inoremap <A-Home> gT
+nnoremap <A-End> gt
+nnoremap <A-Home> gT
+
 augroup my_quickfix
   au!
   " This trigger takes advantage of the fact that the quickfix window can be
@@ -183,10 +188,10 @@ nnoremap <Leader>d :DeniteCursorWord -buffer-name=gtags_context gtags_context<CR
 nnoremap <Leader>D :DeniteCursorWord -buffer-name=gtags_ref gtags_ref<CR>
 nnoremap <Leader>g :Tagbar<CR>
 nnoremap gd :DeniteCursorWord -immediately -buffer-name=gtags_context gtags_context<CR>
-augroup my_c_cpp
-  au!
-  au FileType c,cpp  nmap <buffer> gd <Plug>(clang_complete_goto_declaration)
-augroup END
+" augroup my_c_cpp
+"   au!
+"   au FileType c,cpp  nmap <buffer> gd <Plug>(clang_complete_goto_declaration)
+" augroup END
 
 " Denite / FZF
 nnoremap <Leader>f :Files<CR>
@@ -200,6 +205,20 @@ nnoremap <Leader>o :BTags<CR>
 nnoremap <Leader>l :BLines<CR>
 " nnoremap <Leader>l :Denite -auto-preview line<CR>
 
+" Augmenting Ag command using fzf#vim#with_preview function
+"   * fzf#vim#with_preview([[options], preview window, [toggle keys...]])
+"     * For syntax-highlighting, Ruby and any of the following tools are required:
+"       - Highlight: http://www.andre-simon.de/doku/highlight/en/highlight.php
+"       - CodeRay: http://coderay.rubychan.de/
+"       - Rouge: https://github.com/jneen/rouge
+"
+"   :Ag  - Start fzf with hidden preview window that can be enabled with "?" key
+"   :Ag! - Start fzf in fullscreen and display the preview window above
+command! -bang -nargs=* Ag
+  \ call fzf#vim#ag(<q-args>,
+  \                 <bang>0 ? fzf#vim#with_preview('up:60%')
+  \                         : fzf#vim#with_preview('right:50%:hidden', '?'),
+  \                 <bang>0)
 nnoremap <Leader>/ :Ag<CR>
 " nnoremap <Leader>/ :Denite -auto-preview grep<CR>
 nnoremap <Leader>* :Ag <C-R><C-W><CR>
@@ -234,5 +253,23 @@ augroup my_terminal
   autocmd BufWinEnter,WinEnter term://* startinsert
   autocmd BufLeave term://* stopinsert
 augroup END
+
+" ALE
+call ale#linter#Define('c', {
+      \ 'name': 'clangcheck',
+      \ 'output_stream': 'stderr',
+      \ 'executable': 'clang-check',
+      \ 'command': 'clang-check %s',
+      \ 'callback': 'ale#handlers#gcc#HandleGCCFormat',
+      \ 'lint_file': 1,
+      \})
+call ale#linter#Define('cpp', {
+      \ 'name': 'clangcheck',
+      \ 'output_stream': 'stderr',
+      \ 'executable': 'clang-check',
+      \ 'command': 'clang-check %s',
+      \ 'callback': 'ale#handlers#gcc#HandleGCCFormat',
+      \ 'lint_file': 1,
+      \})
 
 set secure
