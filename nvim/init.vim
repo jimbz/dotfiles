@@ -194,6 +194,7 @@ nnoremap gd :DeniteCursorWord -immediately -buffer-name=gtags_context gtags_cont
 " augroup END
 
 " Denite / FZF
+nnoremap <Leader>p :GitFiles<CR>
 nnoremap <Leader>f :Files<CR>
 " nnoremap <Leader>f :Denite file_rec<CR>
 nnoremap <Leader>r :History<CR>
@@ -246,8 +247,9 @@ call denite#custom#map(
       \)
 
 " Terminal
-nnoremap <Leader>t :below 10new +terminal<CR>
-nnoremap <Leader>T :below vnew +terminal<CR>
+nnoremap <Leader>th :below 10new +terminal<CR>
+nnoremap <Leader>tv :below vnew +terminal<CR>
+nnoremap <Leader>tt :tabnew +terminal<CR>
 augroup my_terminal
   au!
   autocmd BufWinEnter,WinEnter term://* startinsert
