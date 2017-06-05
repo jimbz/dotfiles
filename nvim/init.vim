@@ -221,6 +221,7 @@ command! -bang -nargs=* Ag
   \                         : fzf#vim#with_preview('right:50%:hidden', '?'),
   \                 <bang>0)
 nnoremap <Leader>/ :Ag<CR>
+nnoremap <Leader>? :Ag 
 " nnoremap <Leader>/ :Denite -auto-preview grep<CR>
 nnoremap <Leader>* :Ag <C-R><C-W><CR>
 " nnoremap <Leader>* :DeniteCursorWord -auto-preview grep<CR>
