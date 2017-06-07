@@ -97,6 +97,11 @@ set wildmode=longest:full,full
 set mouse=a
 set hidden
 set noshowmode
+augroup my_c_cpp
+  au!
+  au FileType c,cpp setlocal foldmethod=syntax | normal zR
+  au FileType c,cpp set colorcolumn=80
+augroup END
 
 augroup my_au
   au!
