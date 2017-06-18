@@ -23,6 +23,8 @@ nmap <Leader>a <Plug>(altr-forward)
 nmap <Leader>A <Plug>(altr-back)
 Plug 'mtth/scratch.vim'
 Plug 'tpope/vim-commentary'
+map <Leader>; gc
+nmap <Leader>;; gcc
 Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-sensible'
 Plug 'tpope/vim-sleuth'
@@ -42,6 +44,7 @@ Plug 'junegunn/fzf.vim'
 " -- Git
 Plug 'tpope/vim-fugitive'
 Plug 'airblade/vim-gitgutter'
+Plug 'jreybert/vimagit'
 
 " -- Snippets
 Plug 'SirVer/ultisnips' | Plug 'honza/vim-snippets'
@@ -97,6 +100,7 @@ set wildmode=longest:full,full
 set mouse=a
 set hidden
 set noshowmode
+set nowrap
 augroup my_c_cpp
   au!
   au FileType c,cpp setlocal foldmethod=syntax | normal zR
@@ -105,7 +109,7 @@ augroup END
 
 augroup my_au
   au!
-  autocmd BufEnter,FocusGained * checktime
+  autocmd BufEnter,FocusGained,CursorHold,CursorHoldI * checktime
 augroup END
 
 " From defaults.vim
@@ -135,12 +139,13 @@ endif
 set inccommand=nosplit
 set ignorecase smartcase
 nnoremap / :noh<CR>/
-nnoremap <C-A-a> ?^\S<CR>
-inoremap <C-A-a> ?^\S<CR>
+nnoremap <C-A-a> ?^\w<CR>:noh<CR>
+inoremap <C-A-a> ?^\w<CR>:noh<CR>
 noremap! <expr> <Plug>(StopHL) execute('nohlsearch')[-1]
 augroup my_hls
   au!
   au InsertEnter * call feedkeys("\<Plug>(StopHL)", "m")
+  au BufLeave * let @/=''
 augroup END
 
 " Windows
@@ -256,6 +261,7 @@ call denite#custom#map(
 nnoremap <Leader>th :below 10new +terminal<CR>
 nnoremap <Leader>tv :below vnew +terminal<CR>
 nnoremap <Leader>tt :tabnew +terminal<CR>
+nnoremap <Leader>T :vnew term://tig<CR>
 augroup my_terminal
   au!
   autocmd BufWinEnter,WinEnter term://* startinsert
