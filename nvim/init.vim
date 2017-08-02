@@ -22,6 +22,7 @@ Plug 'junegunn/vim-easy-align'
 Plug 'kana/vim-altr'
 nmap <Leader>a <Plug>(altr-forward)
 nmap <Leader>A <Plug>(altr-back)
+Plug 'michaeljsmith/vim-indent-object'
 Plug 'mtth/scratch.vim'
 Plug 'tpope/vim-commentary'
 map <Leader>; gc
