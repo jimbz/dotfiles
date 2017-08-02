@@ -32,6 +32,26 @@ Plug 'tpope/vim-sensible'
 Plug 'tpope/vim-sleuth'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-abolish'
+Plug 'vitalk/vim-simple-todo'
+let g:simple_todo_map_keys = 0
+nmap <Leader>si <Plug>(simple-todo-new)
+nmap <Leader>sI <Plug>(simple-todo-new-start-of-line)
+nmap <Leader>so <Plug>(simple-todo-below)
+nmap <Leader>sO <Plug>(simple-todo-above)
+nmap <Leader>sx <Plug>(simple-todo-mark-as-done)
+nmap <Leader>sX <Plug>(simple-todo-mark-as-undone)
+nmap <Leader>ss <Plug>(simple-todo-mark-switch)
+vmap <Leader>sI <Plug>(simple-todo-new-start-of-line)
+vmap <Leader>sX <Plug>(simple-todo-mark-as-undone)
+vmap <Leader>sx <Plug>(simple-todo-mark-as-done)
+vmap <Leader>ss <Plug>(simple-todo-mark-switch)
+imap sssi <Plug>(simple-todo-new)
+imap sssI <Plug>(simple-todo-new-start-of-line)
+imap ssso <Plug>(simple-todo-below)
+imap sssO <Plug>(simple-todo-above)
+imap sssX <Plug>(simple-todo-mark-as-undone)
+imap sssx <Plug>(simple-todo-mark-as-done)
+imap ssss <Plug>(simple-todo-mark-switch)
 
 " -- Denite
 Plug 'Shougo/denite.nvim', { 'do': ':UpdateRemotePlugins' }
