@@ -16,6 +16,7 @@ Plug 'airblade/vim-rooter', { 'do': ':UpdateRemotePlugins' }
 Plug 'b4winckler/vim-angry'
 Plug 'jceb/vim-orgmode'
 Plug 'jiangmiao/auto-pairs'
+let g:AutoPairsFlyMode=1
 Plug 'junegunn/vim-easy-align'
 " Plug 'justinmk/vim-sneak'
 Plug 'kana/vim-altr'
@@ -59,15 +60,20 @@ let g:airline_theme='solarized'
 
 " -- Autocomplete / lint
 Plug 'skywind3000/asyncrun.vim'
-command! Make copen | wincmd p | AsyncRun -program=make -save=2
+command! -bang -nargs=* -complete=file Make AsyncRun -auto=make -save=2 -program=make @ <args>
 nnoremap <Leader>m :Make<CR>
-Plug 'roxma/nvim-completion-manager'
-inoremap <expr> <CR> (pumvisible() ? "\<c-y>\<cr>" : "\<CR>")
+augroup qf_toggle
+  autocmd QuickFixCmdPost * call asyncrun#quickfix_toggle(8, 1)
+augroup END
+Plug 'mh21/errormarker.vim'
 Plug 'w0rp/ale'
 let g:ale_linters = {
       \   'c': ['clangcheck', 'clangtidy'],
       \   'cpp': ['clangcheck', 'clangtidy'],
       \}
+
+Plug 'roxma/nvim-completion-manager'
+inoremap <expr> <CR> (pumvisible() ? "\<c-y>\<cr>" : "\<CR>")
 Plug 'roxma/clang_complete'
 let g:clang_auto_user_options = '.clang_complete, compile_commands.json'
 if len(glob('/usr/local/opt/llvm/lib/'))
@@ -75,6 +81,16 @@ if len(glob('/usr/local/opt/llvm/lib/'))
 elseif len(glob('/usr/lib/llvm-3.8/lib/'))
   let g:clang_library_path = '/usr/lib/llvm-3.8/lib/'
 endif
+
+" -- Python
+Plug 'roxma/python-support.nvim'
+" ---- for NCM
+let g:python_support_python3_requirements = add(get(g:,'python_support_python3_requirements',[]),'jedi')
+let g:python_support_python3_requirements = add(get(g:,'python_support_python3_requirements',[]),'psutil')
+let g:python_support_python3_requirements = add(get(g:,'python_support_python3_requirements',[]),'setproctitle')
+" ---- for ALE
+let g:python_support_python3_requirements = add(get(g:,'python_support_python3_requirements',[]),'flake8')
+let g:python_support_python2_requirements = add(get(g:,'python_support_python2_requirements',[]),'flake8')
 
 " -- Highlighting
 Plug 'sheerun/vim-polyglot'
@@ -135,12 +151,38 @@ if !exists(":DiffOrig")
         \ | wincmd p | diffthis
 endif
 
+" Highlight characters that cause problems
+" (from https://github.com/fidian/bin/blob/master/conf/vimrc)
+" \u00a0  hard space, non-breaking space
+" \u1680  Ogham space mark (usually read as a dash)
+" \u180e  Mongolian vowel separator (no width)
+" \u2000  en quad
+" \u2001  em quad
+" \u2002  en space
+" \u2003  em space
+" \u2004  three-per-em space
+" \u2005  four-per-em space
+" \u2006  six-per-em space
+" \u2007  figure space
+" \u2008  punctuation space
+" \u2009  thin space
+" \u200a  hair space
+" \u200b  zero width space
+" \u2014  hyphen (not really whitespace)
+" \u202f  narrow non-breaking space
+" \u205f  medium mathematical space
+" \u3000  ideographic space
+" \uffff  zero width non-breaking space
+highlight ErrorCharacters ctermbg=red guibg=red
+match ErrorCharacters "[\u00a0\u1680\u180e\u2000-\u200b\u2014\u202f\u205f\u3000\uffff]"
+
 " Search
 set inccommand=nosplit
 set ignorecase smartcase
 nnoremap / :noh<CR>/
 nnoremap <C-A-a> ?^\w<CR>:noh<CR>
 inoremap <C-A-a> ?^\w<CR>:noh<CR>
+noremap  <silent><Plug>(StopHL) :<C-U>nohlsearch<cr>
 noremap! <expr> <Plug>(StopHL) execute('nohlsearch')[-1]
 augroup my_hls
   au!
@@ -193,9 +235,9 @@ augroup END
 " Tags
 set csprg=gtags-cscope
 noremap =t :silent !global -u<CR>
-nnoremap <Leader>G :Denite -buffer-name=gtags_completion gtags_completion<CR>
-nnoremap <Leader>d :DeniteCursorWord -buffer-name=gtags_context gtags_context<CR>
-nnoremap <Leader>D :DeniteCursorWord -buffer-name=gtags_ref gtags_ref<CR>
+nnoremap <Leader>G m'<CR> :Denite -buffer-name=gtags_completion gtags_completion<CR>
+nnoremap <Leader>d m'<CR> :DeniteCursorWord -buffer-name=gtags_context gtags_context<CR>
+nnoremap <Leader>D m'<CR> :DeniteCursorWord -buffer-name=gtags_ref gtags_ref<CR>
 nnoremap <Leader>g :Tagbar<CR>
 nnoremap gd :DeniteCursorWord -immediately -buffer-name=gtags_context gtags_context<CR>
 " augroup my_c_cpp
