@@ -10,23 +10,28 @@ call plug#begin('~/.local/share/nvim/plugged')
 
 " Leader
 let mapleader=" "
+let maplocalleader=","
 
 " -- Misc
 Plug 'airblade/vim-rooter', { 'do': ':UpdateRemotePlugins' }
 Plug 'b4winckler/vim-angry'
-Plug 'jceb/vim-orgmode'
+Plug 'dyng/ctrlsf.vim'
 Plug 'jiangmiao/auto-pairs'
 let g:AutoPairsFlyMode=1
 Plug 'junegunn/vim-easy-align'
-" Plug 'justinmk/vim-sneak'
 Plug 'kana/vim-altr'
 nmap <Leader>a <Plug>(altr-forward)
 nmap <Leader>A <Plug>(altr-back)
 Plug 'michaeljsmith/vim-indent-object'
 Plug 'mtth/scratch.vim'
+Plug 'PeterRincker/vim-argumentative'
+Plug 'tmux-plugins/vim-tmux-focus-events'
+Plug 'tommcdo/vim-exchange'
+Plug 'tommcdo/vim-lion'
 Plug 'tpope/vim-commentary'
 map <Leader>; gc
 nmap <Leader>;; gcc
+Plug 'tpope/vim-unimpaired'
 Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-sensible'
 Plug 'tpope/vim-sleuth'
@@ -45,18 +50,10 @@ vmap <Leader>sI <Plug>(simple-todo-new-start-of-line)
 vmap <Leader>sX <Plug>(simple-todo-mark-as-undone)
 vmap <Leader>sx <Plug>(simple-todo-mark-as-done)
 vmap <Leader>ss <Plug>(simple-todo-mark-switch)
-imap sssi <Plug>(simple-todo-new)
-imap sssI <Plug>(simple-todo-new-start-of-line)
-imap ssso <Plug>(simple-todo-below)
-imap sssO <Plug>(simple-todo-above)
-imap sssX <Plug>(simple-todo-mark-as-undone)
-imap sssx <Plug>(simple-todo-mark-as-done)
-imap ssss <Plug>(simple-todo-mark-switch)
 
 " -- Denite
 Plug 'Shougo/denite.nvim', { 'do': ':UpdateRemotePlugins' }
 Plug 'ozelentok/denite-gtags'
-Plug 'chemzqm/vim-easygit'
 Plug 'chemzqm/denite-git'
 
 " -- FZF
@@ -83,24 +80,30 @@ let g:airline_theme='solarized'
 Plug 'skywind3000/asyncrun.vim'
 command! -bang -nargs=* -complete=file Make AsyncRun -auto=make -save=2 -program=make @ <args>
 nnoremap <Leader>m :Make<CR>
+nnoremap <Leader>k :AsyncStop<CR>
 augroup qf_toggle
   autocmd QuickFixCmdPost * call asyncrun#quickfix_toggle(8, 1)
 augroup END
 Plug 'mh21/errormarker.vim'
 Plug 'w0rp/ale'
-let g:ale_linters = {
-      \   'c': ['clangcheck', 'clangtidy'],
-      \   'cpp': ['clangcheck', 'clangtidy'],
-      \}
+
+Plug 'autozimu/LanguageClient-neovim', { 'do': ':UpdateRemotePlugins' }
+let g:LanguageClient_autoStart = 1
+let g:LanguageClient_serverCommands = {
+    \ 'c': ['clangd', '-enable-snippets'],
+    \ 'cpp': ['clangd', '-enable-snippets'],
+    \ }
 
 Plug 'roxma/nvim-completion-manager'
+let g:cm_matcher = {'module': 'cm_matchers.abbrev_matcher'}
 inoremap <expr> <CR> (pumvisible() ? "\<c-y>\<cr>" : "\<CR>")
+
 Plug 'roxma/clang_complete'
 let g:clang_auto_user_options = '.clang_complete, compile_commands.json'
 if len(glob('/usr/local/opt/llvm/lib/'))
   let g:clang_library_path = '/usr/local/opt/llvm/lib/'
-elseif len(glob('/usr/lib/llvm-3.8/lib/'))
-  let g:clang_library_path = '/usr/lib/llvm-3.8/lib/'
+elseif len(glob('/usr/local/lib/libclang.so'))
+  let g:clang_library_path = '/usr/local/lib/libclang.so'
 endif
 
 " -- Python
@@ -138,10 +141,14 @@ set mouse=a
 set hidden
 set noshowmode
 set nowrap
+set undofile
 augroup my_c_cpp
   au!
   au FileType c,cpp setlocal foldmethod=syntax | normal zR
-  au FileType c,cpp set colorcolumn=80
+  au FileType c,cpp setlocal colorcolumn=80
+  au FileType c,cpp setlocal list
+  au FileType c,cpp nnoremap <buffer> <LocalLeader>c :AsyncRun -auto=make clang-tidy -header-filter='^%:h/.*' %<CR>
+  au FileType c,cpp setlocal errorformat^=%I%f:%l:%c:\ note:%m,%I%f:%l:\ note:%m,%f:%l:%c:\ %t%*[^:]:%m,%f:%l:\ %t%*[^:]:%m
 augroup END
 
 augroup my_au
@@ -203,13 +210,15 @@ set ignorecase smartcase
 nnoremap / :noh<CR>/
 nnoremap <C-A-a> ?^\w<CR>:noh<CR>
 inoremap <C-A-a> ?^\w<CR>:noh<CR>
-noremap  <silent><Plug>(StopHL) :<C-U>nohlsearch<cr>
-noremap! <expr> <Plug>(StopHL) execute('nohlsearch')[-1]
-augroup my_hls
-  au!
-  au InsertEnter * call feedkeys("\<Plug>(StopHL)", "m")
-  au BufLeave * let @/=''
-augroup END
+nnoremap <ESC>^[ <ESC>^[
+nnoremap <silent> <CR> :noh<CR><CR>
+nnoremap <silent> <ESC> :noh<CR><ESC>
+nnoremap <silent> i :noh<CR>i
+nnoremap <silent> I :noh<CR>I
+nnoremap <silent> a :noh<CR>a
+nnoremap <silent> A :noh<CR>A
+nnoremap <silent> o :noh<CR>o
+nnoremap <silent> O :noh<CR>O
 
 " Windows
 nnoremap <Leader><Tab> <C-^>
@@ -254,30 +263,25 @@ augroup my_quickfix
 augroup END
 
 " Tags
-set csprg=gtags-cscope
-noremap =t :silent !global -u<CR>
-nnoremap <Leader>G m'<CR> :Denite -buffer-name=gtags_completion gtags_completion<CR>
-nnoremap <Leader>d m'<CR> :DeniteCursorWord -buffer-name=gtags_context gtags_context<CR>
-nnoremap <Leader>D m'<CR> :DeniteCursorWord -buffer-name=gtags_ref gtags_ref<CR>
-nnoremap <Leader>g :Tagbar<CR>
-nnoremap gd :DeniteCursorWord -immediately -buffer-name=gtags_context gtags_context<CR>
-" augroup my_c_cpp
-"   au!
-"   au FileType c,cpp  nmap <buffer> gd <Plug>(clang_complete_goto_declaration)
-" augroup END
+augroup my_c_cpp_tags
+  au!
+  set csprg=gtags-cscope
+  au FileType c,cpp nnoremap <buffer> <LocalLeader>t :AsyncRun global -u<CR>
+  au FileType c,cpp nnoremap <buffer> <LocalLeader>G m':Denite -buffer-name=gtags_completion gtags_completion<CR>
+  au FileType c,cpp nnoremap <buffer> <LocalLeader>d m':DeniteCursorWord -buffer-name=gtags_context gtags_context<CR>
+  au FileType c,cpp nnoremap <buffer> <LocalLeader>D m':DeniteCursorWord -buffer-name=gtags_ref gtags_ref<CR>
+  au FileType c,cpp nnoremap <buffer> <LocalLeader>g :Tagbar<CR>
+  au FileType c,cpp nnoremap <buffer> gd m':DeniteCursorWord -immediately -buffer-name=gtags_context gtags_context<CR>
+  au FileType c,cpp nnoremap <silent> gD m':call LanguageClient_textDocument_definition()<CR>
+augroup END
 
-" Denite / FZF
+" FZF
 nnoremap <Leader>p :GitFiles<CR>
 nnoremap <Leader>f :Files<CR>
-" nnoremap <Leader>f :Denite file_rec<CR>
 nnoremap <Leader>r :History<CR>
-" nnoremap <Leader>r :Denite file_old<CR>
 nnoremap <Leader>b :Buffers<CR>
-" nnoremap <Leader>b :Denite buffer<CR>
-nnoremap <Leader>o :BTags<CR>
-" nnoremap <Leader>o :Denite -auto-preview outline<CR>
-nnoremap <Leader>l :BLines<CR>
-" nnoremap <Leader>l :Denite -auto-preview line<CR>
+nnoremap <Leader>o m':BTags<CR>
+nnoremap <Leader>l m':BLines<CR>
 
 " Augmenting Ag command using fzf#vim#with_preview function
 "   * fzf#vim#with_preview([[options], preview window, [toggle keys...]])
@@ -293,18 +297,9 @@ command! -bang -nargs=* Ag
   \                 <bang>0 ? fzf#vim#with_preview('up:60%')
   \                         : fzf#vim#with_preview('right:50%:hidden', '?'),
   \                 <bang>0)
-nnoremap <Leader>/ :Ag<CR>
-nnoremap <Leader>? :Ag 
-" nnoremap <Leader>/ :Denite -auto-preview grep<CR>
-nnoremap <Leader>* :Ag <C-R><C-W><CR>
-" nnoremap <Leader>* :DeniteCursorWord -auto-preview grep<CR>
-" call denite#custom#var('grep', 'command', ['ag'])
-" call denite#custom#var('grep', 'default_opts',
-"       \ ['-i', '--vimgrep'])
-" call denite#custom#var('grep', 'recursive_opts', [])
-" call denite#custom#var('grep', 'pattern_opt', [])
-" call denite#custom#var('grep', 'separator', ['--'])
-" call denite#custom#var('grep', 'final_opts', [])
+nnoremap <Leader>/ m':Ag<CR>
+nnoremap <Leader>? m':Ag<Space>
+nnoremap <Leader>* m':Ag <C-R><C-W><CR>
 
 nnoremap <Leader><Leader> :Denite 
 call denite#custom#map(
@@ -330,23 +325,5 @@ augroup my_terminal
   autocmd BufWinEnter,WinEnter term://* startinsert
   autocmd BufLeave term://* stopinsert
 augroup END
-
-" ALE
-call ale#linter#Define('c', {
-      \ 'name': 'clangcheck',
-      \ 'output_stream': 'stderr',
-      \ 'executable': 'clang-check',
-      \ 'command': 'clang-check %s',
-      \ 'callback': 'ale#handlers#gcc#HandleGCCFormat',
-      \ 'lint_file': 1,
-      \})
-call ale#linter#Define('cpp', {
-      \ 'name': 'clangcheck',
-      \ 'output_stream': 'stderr',
-      \ 'executable': 'clang-check',
-      \ 'command': 'clang-check %s',
-      \ 'callback': 'ale#handlers#gcc#HandleGCCFormat',
-      \ 'lint_file': 1,
-      \})
 
 set secure
