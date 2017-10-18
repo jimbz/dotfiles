@@ -2,15 +2,14 @@
 if empty(glob('~/.local/share/nvim/site/autoload/plug.vim'))
   silent !curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs
     \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-  autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
 endif
 
 " Specify a directory for plugins (for Neovim: ~/.local/share/nvim/plugged)
 call plug#begin('~/.local/share/nvim/plugged')
 
 " Leader
-let mapleader=" "
-let maplocalleader=","
+let g:mapleader=' '
+let g:maplocalleader=','
 
 " -- Misc
 Plug 'airblade/vim-rooter', { 'do': ':UpdateRemotePlugins' }
@@ -20,6 +19,7 @@ Plug 'jiangmiao/auto-pairs'
 let g:AutoPairsFlyMode=1
 Plug 'junegunn/vim-easy-align'
 Plug 'kana/vim-altr'
+Plug 'ludovicchabant/vim-gutentags'
 nmap <Leader>a <Plug>(altr-forward)
 nmap <Leader>A <Plug>(altr-back)
 Plug 'michaeljsmith/vim-indent-object'
@@ -29,8 +29,14 @@ Plug 'tmux-plugins/vim-tmux-focus-events'
 Plug 'tommcdo/vim-exchange'
 Plug 'tommcdo/vim-lion'
 Plug 'tpope/vim-commentary'
-map <Leader>; gc
+nmap <Leader>; gc
 nmap <Leader>;; gcc
+nmap <Leader>;y yyPgccj
+nmap <Leader>;Y yypgcck
+
+vmap <Leader>; gc
+vmap <Leader>;Y yPgvgc'[
+vmap <Leader>;y yP`[v`]gc']j
 Plug 'tpope/vim-unimpaired'
 Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-sensible'
@@ -51,11 +57,6 @@ vmap <Leader>sX <Plug>(simple-todo-mark-as-undone)
 vmap <Leader>sx <Plug>(simple-todo-mark-as-done)
 vmap <Leader>ss <Plug>(simple-todo-mark-switch)
 
-" -- Denite
-Plug 'Shougo/denite.nvim', { 'do': ':UpdateRemotePlugins' }
-Plug 'ozelentok/denite-gtags'
-Plug 'chemzqm/denite-git'
-
 " -- FZF
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
@@ -72,6 +73,7 @@ Plug 'SirVer/ultisnips' | Plug 'honza/vim-snippets'
 Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
 Plug 'majutsushi/tagbar'
 Plug 'mbbill/undotree'
+let g:undotree_WindowLayout = 2
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 let g:airline_theme='solarized'
@@ -89,22 +91,14 @@ Plug 'w0rp/ale'
 
 Plug 'autozimu/LanguageClient-neovim', { 'do': ':UpdateRemotePlugins' }
 let g:LanguageClient_autoStart = 1
+let g:LanguageClient_diagnosticsList = 'location'
 let g:LanguageClient_serverCommands = {
-    \ 'c': ['clangd', '-enable-snippets'],
-    \ 'cpp': ['clangd', '-enable-snippets'],
+    \ 'c': ['clangd', '-enable-snippets', '-j=50'],
+    \ 'cpp': ['clangd', '-enable-snippets', '-j=50'],
     \ }
 
-Plug 'roxma/nvim-completion-manager'
-let g:cm_matcher = {'module': 'cm_matchers.abbrev_matcher'}
+Plug 'roxma/nvim-completion-manager', { 'do': ':UpdateRemotePlugins' }
 inoremap <expr> <CR> (pumvisible() ? "\<c-y>\<cr>" : "\<CR>")
-
-Plug 'roxma/clang_complete'
-let g:clang_auto_user_options = '.clang_complete, compile_commands.json'
-if len(glob('/usr/local/opt/llvm/lib/'))
-  let g:clang_library_path = '/usr/local/opt/llvm/lib/'
-elseif len(glob('/usr/local/lib/libclang.so'))
-  let g:clang_library_path = '/usr/local/lib/libclang.so'
-endif
 
 " -- Python
 Plug 'roxma/python-support.nvim'
@@ -135,20 +129,24 @@ colorscheme NeoSolarized
 
 " Misc
 set exrc
-set cino=(0
+set cinoptions=(0
 set wildmode=longest:full,full
 set mouse=a
 set hidden
 set noshowmode
 set nowrap
 set undofile
+let g:ale_c_lizard_options = '-ENS -EIgnoreAssert -T length=100'
 augroup my_c_cpp
   au!
   au FileType c,cpp setlocal foldmethod=syntax | normal zR
   au FileType c,cpp setlocal colorcolumn=80
   au FileType c,cpp setlocal list
-  au FileType c,cpp nnoremap <buffer> <LocalLeader>c :AsyncRun -auto=make clang-tidy -header-filter='^%:h/.*' %<CR>
   au FileType c,cpp setlocal errorformat^=%I%f:%l:%c:\ note:%m,%I%f:%l:\ note:%m,%f:%l:%c:\ %t%*[^:]:%m,%f:%l:\ %t%*[^:]:%m
+  au FileType c,cpp nnoremap <buffer> <LocalLeader>c :AsyncRun -auto=make clang-tidy -header-filter='^%:h/.*' %<CR>
+  au FileType c,cpp nnoremap <buffer> <LocalLeader>l :tabnew<CR>
+        \:silent 0r ! lizard -ENS -EIgnoreAssert -T length=100 #<CR>
+        \:silent setl nomodified nomodifiable<CR>:q
 augroup END
 
 augroup my_au
@@ -174,7 +172,7 @@ augroup END
 " file it was loaded from, thus the changes you made.
 " Only define it when not defined already.
 " Revert with: ":delcommand DiffOrig".
-if !exists(":DiffOrig")
+if !exists(':DiffOrig')
   command DiffOrig vert new | set bt=nofile | r ++edit # | 0d_ | diffthis
         \ | wincmd p | diffthis
 endif
@@ -265,23 +263,28 @@ augroup END
 " Tags
 augroup my_c_cpp_tags
   au!
-  set csprg=gtags-cscope
+  set cscopeprg=gtags-cscope
+  set cscopetag
+  set cscopequickfix=s-,d-,c-,t-,e-,i-,a-
   au FileType c,cpp nnoremap <buffer> <LocalLeader>t :AsyncRun global -u<CR>
   au FileType c,cpp nnoremap <buffer> <LocalLeader>G m':Denite -buffer-name=gtags_completion gtags_completion<CR>
   au FileType c,cpp nnoremap <buffer> <LocalLeader>d m':DeniteCursorWord -buffer-name=gtags_context gtags_context<CR>
   au FileType c,cpp nnoremap <buffer> <LocalLeader>D m':DeniteCursorWord -buffer-name=gtags_ref gtags_ref<CR>
   au FileType c,cpp nnoremap <buffer> <LocalLeader>g :Tagbar<CR>
-  au FileType c,cpp nnoremap <buffer> gd m':DeniteCursorWord -immediately -buffer-name=gtags_context gtags_context<CR>
-  au FileType c,cpp nnoremap <silent> gD m':call LanguageClient_textDocument_definition()<CR>
+  au FileType c,cpp nnoremap <buffer> <LocalLeader>s :cs find s <C-R>=expand("<cword>")<CR><CR>:copen<CR>
+  au FileType c,cpp nnoremap <buffer> <silent> gD m':call LanguageClient_textDocument_definition()<CR>
 augroup END
 
 " FZF
+nnoremap <Leader>ug :GutentagsUpdate<CR>
 nnoremap <Leader>p :GitFiles<CR>
 nnoremap <Leader>f :Files<CR>
 nnoremap <Leader>r :History<CR>
 nnoremap <Leader>b :Buffers<CR>
 nnoremap <Leader>o m':BTags<CR>
+nnoremap <Leader>O m':Tags<CR>
 nnoremap <Leader>l m':BLines<CR>
+nnoremap <Leader>L m':Lines<CR>
 
 " Augmenting Ag command using fzf#vim#with_preview function
 "   * fzf#vim#with_preview([[options], preview window, [toggle keys...]])
