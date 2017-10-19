@@ -267,9 +267,6 @@ augroup my_c_cpp_tags
   set cscopetag
   set cscopequickfix=s-,d-,c-,t-,e-,i-,a-
   au FileType c,cpp nnoremap <buffer> <LocalLeader>t :AsyncRun global -u<CR>
-  au FileType c,cpp nnoremap <buffer> <LocalLeader>G m':Denite -buffer-name=gtags_completion gtags_completion<CR>
-  au FileType c,cpp nnoremap <buffer> <LocalLeader>d m':DeniteCursorWord -buffer-name=gtags_context gtags_context<CR>
-  au FileType c,cpp nnoremap <buffer> <LocalLeader>D m':DeniteCursorWord -buffer-name=gtags_ref gtags_ref<CR>
   au FileType c,cpp nnoremap <buffer> <LocalLeader>g :Tagbar<CR>
   au FileType c,cpp nnoremap <buffer> <LocalLeader>s :cs find s <C-R>=expand("<cword>")<CR><CR>:copen<CR>
   au FileType c,cpp nnoremap <buffer> <silent> gD m':call LanguageClient_textDocument_definition()<CR>
@@ -303,20 +300,6 @@ command! -bang -nargs=* Ag
 nnoremap <Leader>/ m':Ag<CR>
 nnoremap <Leader>? m':Ag<Space>
 nnoremap <Leader>* m':Ag <C-R><C-W><CR>
-
-nnoremap <Leader><Leader> :Denite 
-call denite#custom#map(
-      \ 'insert',
-      \ '<Down>',
-      \ '<denite:move_to_next_line>',
-      \ 'noremap'
-      \)
-call denite#custom#map(
-      \ 'insert',
-      \ '<Up>',
-      \ '<denite:move_to_previous_line>',
-      \ 'noremap'
-      \)
 
 " Terminal
 nnoremap <Leader>th :below 10new +terminal<CR>
