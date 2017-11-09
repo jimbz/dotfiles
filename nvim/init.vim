@@ -2,6 +2,7 @@
 if empty(glob('~/.local/share/nvim/site/autoload/plug.vim'))
   silent !curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs
     \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+  autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
 endif
 
 " Specify a directory for plugins (for Neovim: ~/.local/share/nvim/plugged)
@@ -11,21 +12,17 @@ call plug#begin('~/.local/share/nvim/plugged')
 let g:mapleader=' '
 let g:maplocalleader=','
 
-" -- Misc
-Plug 'airblade/vim-rooter', { 'do': ':UpdateRemotePlugins' }
-Plug 'b4winckler/vim-angry'
-Plug 'dyng/ctrlsf.vim'
+" -- Misc system
+Plug 'airblade/vim-rooter'
+Plug 'tmux-plugins/vim-tmux-focus-events'
+Plug 'tpope/vim-eunuch'
+Plug 'tpope/vim-unimpaired'
+Plug 'tpope/vim-repeat'
+Plug 'tpope/vim-sensible'
+
+" -- Misc editing
 Plug 'jiangmiao/auto-pairs'
 let g:AutoPairsFlyMode=1
-Plug 'junegunn/vim-easy-align'
-Plug 'kana/vim-altr'
-Plug 'ludovicchabant/vim-gutentags'
-nmap <Leader>a <Plug>(altr-forward)
-nmap <Leader>A <Plug>(altr-back)
-Plug 'michaeljsmith/vim-indent-object'
-Plug 'mtth/scratch.vim'
-Plug 'PeterRincker/vim-argumentative'
-Plug 'tmux-plugins/vim-tmux-focus-events'
 Plug 'tommcdo/vim-exchange'
 Plug 'tommcdo/vim-lion'
 Plug 'tpope/vim-commentary'
@@ -33,16 +30,44 @@ nmap <Leader>; gc
 nmap <Leader>;; gcc
 nmap <Leader>;y yyPgccj
 nmap <Leader>;Y yypgcck
-
 vmap <Leader>; gc
 vmap <Leader>;Y yPgvgc'[
 vmap <Leader>;y yP`[v`]gc']j
-Plug 'tpope/vim-unimpaired'
-Plug 'tpope/vim-repeat'
-Plug 'tpope/vim-sensible'
+Plug 'tpope/vim-abolish'
 Plug 'tpope/vim-sleuth'
 Plug 'tpope/vim-surround'
-Plug 'tpope/vim-abolish'
+
+" -- Search, motion and textobjects
+Plug 'b4winckler/vim-angry'
+Plug 'chaoren/vim-wordmotion'
+let g:wordmotion_mappings = {
+      \ 'w' : '<Leader>mw',
+      \ 'b' : '<Leader>mb',
+      \ 'e' : '<Leader>me',
+      \ 'ge': '<Leader>mge',
+      \ 'aw': '<Leader>maw',
+      \ 'iw': '<Leader>miw',
+      \ '<C-R><C-W>' : ''
+      \ }
+Plug 'dyng/ctrlsf.vim'
+Plug 'easymotion/vim-easymotion'
+nmap <Leader><Leader><Leader> <Plug>(easymotion-overwin-f2)
+map <Leader><Leader> <Plug>(easymotion-prefix)
+Plug 'glts/vim-textobj-comment'
+Plug 'kana/vim-textobj-user'
+Plug 'michaeljsmith/vim-indent-object'
+Plug 'PeterRincker/vim-argumentative'
+
+" -- Buffers
+Plug 'kana/vim-altr'
+nmap <Leader>a <Plug>(altr-forward)
+nmap <Leader>A <Plug>(altr-back)
+Plug 'mtth/scratch.vim'
+Plug 'qpkorr/vim-bufkill'
+
+" -- Productivity
+Plug 'vimwiki/vimwiki'
+let g:vimwiki_list = [{'syntax': 'markdown', 'ext': '.md'}]
 Plug 'vitalk/vim-simple-todo'
 let g:simple_todo_map_keys = 0
 nmap <Leader>si <Plug>(simple-todo-new)
@@ -60,23 +85,72 @@ vmap <Leader>ss <Plug>(simple-todo-mark-switch)
 " -- FZF
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
+let g:fzf_commits_log_options = '--graph --color=always --format="%C(auto)%h %<(18,trunc)%an%d %s %C(bold)%cr"'
+" Augmenting Ag command using fzf#vim#with_preview function
+"   * fzf#vim#with_preview([[options], preview window, [toggle keys...]])
+"     * For syntax-highlighting, Ruby and any of the following tools are required:
+"       - Highlight: http://www.andre-simon.de/doku/highlight/en/highlight.php
+"       - CodeRay: http://coderay.rubychan.de/
+"       - Rouge: https://github.com/jneen/rouge
+"
+"   :Ag  - Start fzf with hidden preview window that can be enabled with "?" key
+"   :Ag! - Start fzf in fullscreen and display the preview window above
+command! -bang -nargs=* Ag
+  \ call fzf#vim#ag(<q-args>,
+  \                 <bang>0 ? fzf#vim#with_preview('up:60%')
+  \                         : fzf#vim#with_preview('right:50%:hidden', '?'),
+  \                 <bang>0)
+nnoremap <Leader>p :GitFiles<CR>
+nnoremap <Leader>f :Files<CR>
+nnoremap <Leader>r :History<CR>
+nnoremap <Leader>b :Buffers<CR>
+nnoremap <Leader>o m':BTags<CR>
+nnoremap <Leader>O m':Tags<CR>
+nnoremap <Leader>l m':BLines<CR>
+nnoremap <Leader>L m':Lines<CR>
+nnoremap <Leader>c m':BCommits<CR>
+nnoremap <Leader>C m':Commits<CR>
 
+nnoremap <Leader>/ m':Ag<CR>
+nnoremap <Leader>? m':Ag<Space>
+nnoremap <Leader>* m':Ag \b<C-R><C-W>\b<CR>
+
+imap <c-x><c-l> <plug>(fzf-complete-line)
 " -- Git
 Plug 'tpope/vim-fugitive'
+Plug 'tpope/vim-rhubarb'
 Plug 'airblade/vim-gitgutter'
 Plug 'jreybert/vimagit'
 
 " -- Snippets
 Plug 'SirVer/ultisnips' | Plug 'honza/vim-snippets'
+let g:UltiSnipsExpandTrigger='<c-j>'
 
 " -- Sidebars, status bars
 Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
 Plug 'majutsushi/tagbar'
 Plug 'mbbill/undotree'
 let g:undotree_WindowLayout = 2
-Plug 'vim-airline/vim-airline'
-Plug 'vim-airline/vim-airline-themes'
-let g:airline_theme='solarized'
+Plug 'itchyny/lightline.vim'
+let g:lightline = {
+      \ 'colorscheme': 'nord',
+      \ 'active': {
+      \   'left': [ [ 'mode', 'paste' ],
+      \             [ 'gitbranch', 'readonly', 'modified', 'filename' ],
+      \             [ 'tagbar' ] ],
+      \   'right': [ [ 'lineinfo' ],
+      \              [ 'percent' ] ]
+      \ },
+      \ 'component': {
+      \   'tagbar': '%{tagbar#currenttag("%s", "[No Tags]", "f")}',
+      \ },
+      \ 'component_function': {
+      \   'gitbranch': 'fugitive#head'
+      \ },
+      \ }
+
+" -- Debug
+Plug 'huawenyu/neogdb.vim'
 
 " -- Autocomplete / lint
 Plug 'skywind3000/asyncrun.vim'
@@ -88,27 +162,15 @@ augroup qf_toggle
 augroup END
 Plug 'mh21/errormarker.vim'
 Plug 'w0rp/ale'
+let g:ale_c_lizard_options = '-ENS -EIgnoreAssert -T length=100'
 
-Plug 'autozimu/LanguageClient-neovim', { 'do': ':UpdateRemotePlugins' }
-let g:LanguageClient_autoStart = 1
-let g:LanguageClient_diagnosticsList = 'location'
-let g:LanguageClient_serverCommands = {
-    \ 'c': ['clangd', '-enable-snippets', '-j=50'],
-    \ 'cpp': ['clangd', '-enable-snippets', '-j=50'],
-    \ }
+Plug 'ludovicchabant/vim-gutentags'
+nnoremap <Leader>ug :GutentagsUpdate<CR>
 
-Plug 'roxma/nvim-completion-manager', { 'do': ':UpdateRemotePlugins' }
-inoremap <expr> <CR> (pumvisible() ? "\<c-y>\<cr>" : "\<CR>")
-
-" -- Python
-Plug 'roxma/python-support.nvim'
-" ---- for NCM
-let g:python_support_python3_requirements = add(get(g:,'python_support_python3_requirements',[]),'jedi')
-let g:python_support_python3_requirements = add(get(g:,'python_support_python3_requirements',[]),'psutil')
-let g:python_support_python3_requirements = add(get(g:,'python_support_python3_requirements',[]),'setproctitle')
-" ---- for ALE
-let g:python_support_python3_requirements = add(get(g:,'python_support_python3_requirements',[]),'flake8')
-let g:python_support_python2_requirements = add(get(g:,'python_support_python2_requirements',[]),'flake8')
+Plug 'Valloric/YouCompleteMe', { 'do': './install.py --clang-completer'  }
+let g:ycm_python_binary_path = 'python'
+let g:ycm_add_preview_to_completeopt = 1
+let g:ycm_autoclose_preview_window_after_insertion = 1
 
 " -- Highlighting
 Plug 'sheerun/vim-polyglot'
@@ -116,6 +178,7 @@ Plug 'sheerun/vim-polyglot'
 " -- Colorschemes
 Plug 'altercation/vim-colors-solarized'
 Plug 'iCyMind/NeoSolarized'
+Plug 'arcticicestudio/nord-vim'
 
 " Initialize plugin system
 call plug#end()
@@ -136,7 +199,6 @@ set hidden
 set noshowmode
 set nowrap
 set undofile
-let g:ale_c_lizard_options = '-ENS -EIgnoreAssert -T length=100'
 augroup my_c_cpp
   au!
   au FileType c,cpp setlocal foldmethod=syntax | normal zR
@@ -146,10 +208,12 @@ augroup my_c_cpp
   au FileType c,cpp nnoremap <buffer> <LocalLeader>c :AsyncRun -auto=make clang-tidy -header-filter='^%:h/.*' %<CR>
   au FileType c,cpp nnoremap <buffer> <LocalLeader>l :tabnew<CR>
         \:silent 0r ! lizard -ENS -EIgnoreAssert -T length=100 #<CR>
-        \:silent setl nomodified nomodifiable<CR>:q
+        \:silent setl nomodified nomodifiable<CR>
+        \:silent nnoremap <buffer> q :tabclose<lt>CR><CR>
+  au FileType c,cpp nnoremap <buffer> <LocalLeader>g :YcmCompleter GoTo<CR>
 augroup END
 
-augroup my_au
+augroup auto_checktime
   au!
   autocmd BufEnter,FocusGained,CursorHold,CursorHoldI * checktime
 augroup END
@@ -204,10 +268,15 @@ match ErrorCharacters "[\u00a0\u1680\u180e\u2000-\u200b\u2014\u202f\u205f\u3000\
 
 " Search
 set inccommand=nosplit
-set ignorecase smartcase
+set smartcase
+set hlsearch
 nnoremap / :noh<CR>/
-nnoremap <C-A-a> ?^\w<CR>:noh<CR>
-inoremap <C-A-a> ?^\w<CR>:noh<CR>
+" Use a function to preserve the / register
+function! GoToFunctionStart()
+  keeppattern ?^\w\+\ze(\|^\w\+.\{-\}\zs\w\+\ze(
+endfunction
+
+nnoremap <C-A-a> m':keeppattern ?^\w<CR>:noh<CR>
 nnoremap <ESC>^[ <ESC>^[
 nnoremap <silent> <CR> :noh<CR><CR>
 nnoremap <silent> <ESC> :noh<CR><ESC>
@@ -267,39 +336,8 @@ augroup my_c_cpp_tags
   set cscopetag
   set cscopequickfix=s-,d-,c-,t-,e-,i-,a-
   au FileType c,cpp nnoremap <buffer> <LocalLeader>t :AsyncRun global -u<CR>
-  au FileType c,cpp nnoremap <buffer> <LocalLeader>g :Tagbar<CR>
   au FileType c,cpp nnoremap <buffer> <LocalLeader>s :cs find s <C-R>=expand("<cword>")<CR><CR>:copen<CR>
-  au FileType c,cpp nnoremap <buffer> <silent> gD m':call LanguageClient_textDocument_definition()<CR>
 augroup END
-
-" FZF
-nnoremap <Leader>ug :GutentagsUpdate<CR>
-nnoremap <Leader>p :GitFiles<CR>
-nnoremap <Leader>f :Files<CR>
-nnoremap <Leader>r :History<CR>
-nnoremap <Leader>b :Buffers<CR>
-nnoremap <Leader>o m':BTags<CR>
-nnoremap <Leader>O m':Tags<CR>
-nnoremap <Leader>l m':BLines<CR>
-nnoremap <Leader>L m':Lines<CR>
-
-" Augmenting Ag command using fzf#vim#with_preview function
-"   * fzf#vim#with_preview([[options], preview window, [toggle keys...]])
-"     * For syntax-highlighting, Ruby and any of the following tools are required:
-"       - Highlight: http://www.andre-simon.de/doku/highlight/en/highlight.php
-"       - CodeRay: http://coderay.rubychan.de/
-"       - Rouge: https://github.com/jneen/rouge
-"
-"   :Ag  - Start fzf with hidden preview window that can be enabled with "?" key
-"   :Ag! - Start fzf in fullscreen and display the preview window above
-command! -bang -nargs=* Ag
-  \ call fzf#vim#ag(<q-args>,
-  \                 <bang>0 ? fzf#vim#with_preview('up:60%')
-  \                         : fzf#vim#with_preview('right:50%:hidden', '?'),
-  \                 <bang>0)
-nnoremap <Leader>/ m':Ag<CR>
-nnoremap <Leader>? m':Ag<Space>
-nnoremap <Leader>* m':Ag <C-R><C-W><CR>
 
 " Terminal
 nnoremap <Leader>th :below 10new +terminal<CR>
@@ -308,7 +346,7 @@ nnoremap <Leader>tt :tabnew +terminal<CR>
 nnoremap <Leader>T :vnew term://tig<CR>
 augroup my_terminal
   au!
-  autocmd BufWinEnter,WinEnter term://* startinsert
+  autocmd BufEnter,TermOpen term://* startinsert
   autocmd BufLeave term://* stopinsert
 augroup END
 
