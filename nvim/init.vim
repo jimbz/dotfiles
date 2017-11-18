@@ -23,8 +23,10 @@ Plug 'tpope/vim-sensible'
 " -- Misc editing
 Plug 'jiangmiao/auto-pairs'
 let g:AutoPairsFlyMode=1
+Plug 'machakann/vim-highlightedyank'
 Plug 'tommcdo/vim-exchange'
 Plug 'tommcdo/vim-lion'
+let g:lion_squeeze_spaces = 1
 Plug 'tpope/vim-commentary'
 nmap <Leader>; gc
 nmap <Leader>;; gcc
@@ -110,6 +112,7 @@ nnoremap <Leader>l m':BLines<CR>
 nnoremap <Leader>L m':Lines<CR>
 nnoremap <Leader>c m':BCommits<CR>
 nnoremap <Leader>C m':Commits<CR>
+nnoremap <Leader>: :Commands<CR>
 
 nnoremap <Leader>/ m':Ag<CR>
 nnoremap <Leader>? m':Ag<Space>
@@ -133,7 +136,7 @@ Plug 'mbbill/undotree'
 let g:undotree_WindowLayout = 2
 Plug 'itchyny/lightline.vim'
 let g:lightline = {
-      \ 'colorscheme': 'nord',
+      \ 'colorscheme': 'solarized',
       \ 'active': {
       \   'left': [ [ 'mode', 'paste' ],
       \             [ 'gitbranch', 'readonly', 'modified', 'filename' ],
@@ -158,6 +161,7 @@ command! -bang -nargs=* -complete=file Make AsyncRun -auto=make -save=2 -program
 nnoremap <Leader>m :Make<CR>
 nnoremap <Leader>k :AsyncStop<CR>
 augroup qf_toggle
+  au!
   autocmd QuickFixCmdPost * call asyncrun#quickfix_toggle(8, 1)
 augroup END
 Plug 'mh21/errormarker.vim'
@@ -199,7 +203,7 @@ set hidden
 set noshowmode
 set nowrap
 set undofile
-augroup my_c_cpp
+augroup type_specific_conf
   au!
   au FileType c,cpp setlocal foldmethod=syntax | normal zR
   au FileType c,cpp setlocal colorcolumn=80
@@ -211,6 +215,9 @@ augroup my_c_cpp
         \:silent setl nomodified nomodifiable<CR>
         \:silent nnoremap <buffer> q :tabclose<lt>CR><CR>
   au FileType c,cpp nnoremap <buffer> <LocalLeader>g :YcmCompleter GoTo<CR>
+
+  au FileType vimwiki nnoremap <buffer> <LocalLeader>p :VimwikiDiaryPrevDay<CR>
+  au FileType vimwiki nnoremap <buffer> <LocalLeader>n :VimwikiDiaryNextDay<CR>
 augroup END
 
 augroup auto_checktime
