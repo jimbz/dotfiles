@@ -218,6 +218,7 @@ augroup type_specific_conf
 
   au FileType vimwiki nnoremap <buffer> <LocalLeader>p :VimwikiDiaryPrevDay<CR>
   au FileType vimwiki nnoremap <buffer> <LocalLeader>n :VimwikiDiaryNextDay<CR>
+  au FileType vimwiki nnoremap <buffer> <LocalLeader>o o<ESC>:keeppattern s/.*/\="##### " . strftime("%a %D %H:%M")/<CR>o
 augroup END
 
 augroup auto_checktime
