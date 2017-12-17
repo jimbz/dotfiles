@@ -16,11 +16,13 @@ let g:maplocalleader=','
 Plug 'airblade/vim-rooter'
 Plug 'tmux-plugins/vim-tmux-focus-events'
 Plug 'tpope/vim-eunuch'
+Plug 'tpope/vim-obsession'
 Plug 'tpope/vim-unimpaired'
 Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-sensible'
 
 " -- Misc editing
+Plug 'AndrewRadev/linediff.vim'
 Plug 'jiangmiao/auto-pairs'
 let g:AutoPairsFlyMode=1
 Plug 'machakann/vim-highlightedyank'
@@ -164,7 +166,6 @@ augroup qf_toggle
   au!
   autocmd QuickFixCmdPost * call asyncrun#quickfix_toggle(8, 1)
 augroup END
-Plug 'mh21/errormarker.vim'
 Plug 'w0rp/ale'
 let g:ale_c_lizard_options = '-ENS -EIgnoreAssert -T length=100'
 
@@ -183,6 +184,7 @@ Plug 'sheerun/vim-polyglot'
 Plug 'altercation/vim-colors-solarized'
 Plug 'iCyMind/NeoSolarized'
 Plug 'arcticicestudio/nord-vim'
+Plug 'romainl/Apprentice'
 
 " Initialize plugin system
 call plug#end()
@@ -206,8 +208,7 @@ set undofile
 augroup type_specific_conf
   au!
   au FileType c,cpp setlocal foldmethod=syntax | normal zR
-  au FileType c,cpp setlocal colorcolumn=80
-  au FileType c,cpp setlocal list
+  au FileType c,cpp setlocal colorcolumn=80 list spell
   au FileType c,cpp setlocal errorformat^=%I%f:%l:%c:\ note:%m,%I%f:%l:\ note:%m,%f:%l:%c:\ %t%*[^:]:%m,%f:%l:\ %t%*[^:]:%m
   au FileType c,cpp nnoremap <buffer> <LocalLeader>c :AsyncRun -auto=make clang-tidy -header-filter='^%:h/.*' %<CR>
   au FileType c,cpp nnoremap <buffer> <LocalLeader>l :tabnew<CR>
@@ -218,7 +219,9 @@ augroup type_specific_conf
 
   au FileType vimwiki nnoremap <buffer> <LocalLeader>p :VimwikiDiaryPrevDay<CR>
   au FileType vimwiki nnoremap <buffer> <LocalLeader>n :VimwikiDiaryNextDay<CR>
-  au FileType vimwiki nnoremap <buffer> <LocalLeader>o o<ESC>:keeppattern s/.*/\="##### " . strftime("%a %D %H:%M")/<CR>o
+  au FileType vimwiki nnoremap <buffer> <LocalLeader>o 2o<ESC>:keeppattern s/.*/\="##### " . strftime("%a %D %H:%M")/<CR>o
+  au FileType vimwiki vertical resize 80
+  au FileType vimwiki setlocal textwidth=80 winfixwidth sidescrolloff=0 spell
 augroup END
 
 augroup auto_checktime
@@ -327,6 +330,8 @@ inoremap <A-End> gt
 inoremap <A-Home> gT
 nnoremap <A-End> gt
 nnoremap <A-Home> gT
+
+nnoremap <Leader>z :tab split<CR>
 
 augroup my_quickfix
   au!
