@@ -220,8 +220,12 @@ augroup type_specific_conf
   au FileType vimwiki nnoremap <buffer> <LocalLeader>p :VimwikiDiaryPrevDay<CR>
   au FileType vimwiki nnoremap <buffer> <LocalLeader>n :VimwikiDiaryNextDay<CR>
   au FileType vimwiki nnoremap <buffer> <LocalLeader>o 2o<ESC>:keeppattern s/.*/\="##### " . strftime("%a %D %H:%M")/<CR>o
+  au FileType vimwiki nnoremap <buffer> <LocalLeader>N :keeppattern g/^\s*- \[[^xX]]/t$<CR>
+  au FileType vimwiki nnoremap <buffer> <LocalLeader>S :keeppattern g/^\s*- \[[xX]]/t$<CR>
   au FileType vimwiki vertical resize 80
-  au FileType vimwiki setlocal textwidth=80 winfixwidth sidescrolloff=0 spell
+  au FileType vimwiki setlocal wrap linebreak winfixwidth sidescrolloff=0 spell
+
+  au Filetype cmake setlocal commentstring=#\ %s
 augroup END
 
 augroup auto_checktime
