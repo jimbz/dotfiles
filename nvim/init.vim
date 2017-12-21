@@ -186,11 +186,15 @@ Plug 'romainl/Apprentice'
 call plug#end()
 
 " Colorscheme
-if(match($TERM, 'screen') < 0)
-  set termguicolors
-endif
 set background=dark
-colorscheme NeoSolarized
+if hostname() =~ "Mac"
+  colorscheme nord
+else
+  if(match($TERM, 'screen') < 0)
+    set termguicolors
+  endif
+  colorscheme NeoSolarized
+endif
 
 " Misc
 set exrc
