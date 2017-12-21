@@ -121,7 +121,6 @@ nnoremap <Leader>/ m':Ag<CR>
 nnoremap <Leader>? m':Ag<Space>
 nnoremap <Leader>* m':Ag \b<C-R><C-W>\b<CR>
 
-imap <c-x><c-l> <plug>(fzf-complete-line)
 " -- Git
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-rhubarb'
@@ -217,6 +216,7 @@ augroup type_specific_conf
         \:silent setl nomodified nomodifiable<CR>
         \:silent nnoremap <buffer> q :tabclose<lt>CR><CR>
   au FileType c,cpp nnoremap <buffer> <LocalLeader>g :YcmCompleter GoTo<CR>
+  au FileType c,cpp iabbrev <buffer> anoopt __attribute__((optimize("O0")))
 
   au FileType vimwiki nnoremap <buffer> <LocalLeader>p :VimwikiDiaryPrevDay<CR>
   au FileType vimwiki nnoremap <buffer> <LocalLeader>n :VimwikiDiaryNextDay<CR>
