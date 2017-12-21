@@ -42,7 +42,6 @@ Plug 'tpope/vim-sleuth'
 Plug 'tpope/vim-surround'
 
 " -- Search, motion and textobjects
-Plug 'b4winckler/vim-angry'
 Plug 'chaoren/vim-wordmotion'
 let g:wordmotion_mappings = {
       \ 'w' : '<Leader>mw',
@@ -57,9 +56,11 @@ Plug 'dyng/ctrlsf.vim'
 Plug 'easymotion/vim-easymotion'
 nmap <Leader><Leader><Leader> <Plug>(easymotion-overwin-f2)
 map <Leader><Leader> <Plug>(easymotion-prefix)
+
+Plug 'fvictorio/vim-textobj-backticks'
 Plug 'glts/vim-textobj-comment'
+Plug 'kana/vim-textobj-indent'
 Plug 'kana/vim-textobj-user'
-Plug 'michaeljsmith/vim-indent-object'
 Plug 'PeterRincker/vim-argumentative'
 
 " -- Buffers
