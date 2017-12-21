@@ -136,23 +136,19 @@ Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
 Plug 'majutsushi/tagbar'
 Plug 'mbbill/undotree'
 let g:undotree_WindowLayout = 2
-Plug 'itchyny/lightline.vim'
-let g:lightline = {
-      \ 'colorscheme': 'solarized',
-      \ 'active': {
-      \   'left': [ [ 'mode', 'paste' ],
-      \             [ 'gitbranch', 'readonly', 'modified', 'filename' ],
-      \             [ 'tagbar' ] ],
-      \   'right': [ [ 'lineinfo' ],
-      \              [ 'percent' ] ]
-      \ },
-      \ 'component': {
-      \   'tagbar': '%{tagbar#currenttag("%s", "[No Tags]", "f")}',
-      \ },
-      \ 'component_function': {
-      \   'gitbranch': 'fugitive#head'
-      \ },
-      \ }
+
+set statusline=
+set statusline+=%#CursorColumn#
+set statusline+=%(\ %f%(%m%)%)
+set statusline+=%(\ (%{fugitive#head(6)})%)
+set statusline+=\ 
+set statusline+=%#StatusLine#
+set statusline+=%<
+set statusline+=%(\ %{tagbar#currenttag('%s',\ '',\ 'f')}\ %)
+set statusline+=%=
+set statusline+=\ %p%%
+set statusline+=\ %l:%c
+set statusline+=\ 
 
 " -- Debug
 Plug 'huawenyu/neogdb.vim'
