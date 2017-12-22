@@ -202,7 +202,7 @@ set cinoptions=(0
 set wildmode=longest:full,full
 set mouse=a
 set hidden
-set noshowmode
+set showmode
 set nowrap
 set undofile
 augroup type_specific_conf
