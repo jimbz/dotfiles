@@ -139,7 +139,7 @@ let g:undotree_WindowLayout = 2
 
 set statusline=
 set statusline+=%#CursorColumn#
-set statusline+=%(\ %f%(%m%)%)
+set statusline+=%(\ %f%(\ %m%)%)
 set statusline+=%(\ (%{fugitive#head(6)})%)
 set statusline+=\ 
 set statusline+=%#StatusLine#
