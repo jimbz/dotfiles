@@ -53,15 +53,15 @@ let g:wordmotion_mappings = {
       \ '<C-R><C-W>' : ''
       \ }
 Plug 'dyng/ctrlsf.vim'
-Plug 'easymotion/vim-easymotion'
-nmap <Leader><Leader><Leader> <Plug>(easymotion-overwin-f2)
-map <Leader><Leader> <Plug>(easymotion-prefix)
+Plug 'justinmk/vim-sneak'
 
-Plug 'fvictorio/vim-textobj-backticks'
+Plug 'wellle/targets.vim'
 Plug 'glts/vim-textobj-comment'
 Plug 'kana/vim-textobj-indent'
 Plug 'kana/vim-textobj-user'
-Plug 'PeterRincker/vim-argumentative'
+
+" -- Quickfix
+Plug 'romainl/vim-qf'
 
 " -- Buffers
 Plug 'kana/vim-altr'
