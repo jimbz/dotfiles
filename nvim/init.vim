@@ -41,7 +41,7 @@ Plug 'tpope/vim-abolish'
 Plug 'tpope/vim-sleuth'
 Plug 'tpope/vim-surround'
 
-" -- Search, motion and textobjects
+" -- Search and motion
 Plug 'chaoren/vim-wordmotion'
 let g:wordmotion_mappings = {
       \ 'w' : '<Leader>mw',
@@ -54,15 +54,12 @@ let g:wordmotion_mappings = {
       \ }
 Plug 'dyng/ctrlsf.vim'
 
-Plug 'wellle/targets.vim'
+" -- Textobjects
+Plug 'fvictorio/vim-textobj-backticks'
 Plug 'glts/vim-textobj-comment'
 Plug 'kana/vim-textobj-indent'
 Plug 'kana/vim-textobj-user'
-
-" -- Quickfix
-Plug 'romainl/vim-qf'
-let g:qf_auto_open_quickfix = 0
-let g:qf_auto_open_loclist = 0
+Plug 'PeterRincker/vim-argumentative'
 
 " -- Buffers
 Plug 'kana/vim-altr'
