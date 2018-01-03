@@ -59,11 +59,6 @@ Plug 'glts/vim-textobj-comment'
 Plug 'kana/vim-textobj-indent'
 Plug 'kana/vim-textobj-user'
 
-" -- Quickfix
-Plug 'romainl/vim-qf'
-let g:qf_auto_open_quickfix = 0
-let g:qf_auto_open_loclist = 0
-
 " -- Buffers
 Plug 'kana/vim-altr'
 nmap <Leader>a <Plug>(altr-forward)
