@@ -53,7 +53,6 @@ let g:wordmotion_mappings = {
       \ '<C-R><C-W>' : ''
       \ }
 Plug 'dyng/ctrlsf.vim'
-Plug 'justinmk/vim-sneak'
 
 Plug 'wellle/targets.vim'
 Plug 'glts/vim-textobj-comment'
@@ -62,6 +61,8 @@ Plug 'kana/vim-textobj-user'
 
 " -- Quickfix
 Plug 'romainl/vim-qf'
+let g:qf_auto_open_quickfix = 0
+let g:qf_auto_open_loclist = 0
 
 " -- Buffers
 Plug 'kana/vim-altr'
@@ -160,7 +161,7 @@ nnoremap <Leader>m :Make<CR>
 nnoremap <Leader>k :AsyncStop<CR>
 augroup qf_toggle
   au!
-  autocmd QuickFixCmdPost * call asyncrun#quickfix_toggle(8, 1)
+  autocmd QuickFixCmdPost * call asyncrun#quickfix_toggle(12, 1)
 augroup END
 Plug 'w0rp/ale'
 let g:ale_c_lizard_options = '-ENS -EIgnoreAssert -T length=100'
@@ -205,29 +206,6 @@ set hidden
 set showmode
 set nowrap
 set undofile
-augroup type_specific_conf
-  au!
-  au FileType c,cpp setlocal foldmethod=syntax | normal zR
-  au FileType c,cpp setlocal colorcolumn=80 list spell
-  au FileType c,cpp setlocal errorformat^=%I%f:%l:%c:\ note:%m,%I%f:%l:\ note:%m,%f:%l:%c:\ %t%*[^:]:%m,%f:%l:\ %t%*[^:]:%m
-  au FileType c,cpp nnoremap <buffer> <LocalLeader>c :AsyncRun -auto=make clang-tidy -header-filter='^%:h/.*' %<CR>
-  au FileType c,cpp nnoremap <buffer> <LocalLeader>l :tabnew<CR>
-        \:silent 0r ! lizard -ENS -EIgnoreAssert -T length=100 #<CR>
-        \:silent setl nomodified nomodifiable<CR>
-        \:silent nnoremap <buffer> q :tabclose<lt>CR><CR>
-  au FileType c,cpp nnoremap <buffer> <LocalLeader>g :YcmCompleter GoTo<CR>
-  au FileType c,cpp iabbrev <buffer> anoopt __attribute__((optimize("O0")))
-
-  au FileType vimwiki nnoremap <buffer> <LocalLeader>p :VimwikiDiaryPrevDay<CR>
-  au FileType vimwiki nnoremap <buffer> <LocalLeader>n :VimwikiDiaryNextDay<CR>
-  au FileType vimwiki nnoremap <buffer> <LocalLeader>o 2o<ESC>:keeppattern s/.*/\="##### " . strftime("%a %D %H:%M")/<CR>o
-  au FileType vimwiki nnoremap <buffer> <LocalLeader>N :keeppattern g/^\s*- \[[^xX]]/t$<CR>
-  au FileType vimwiki nnoremap <buffer> <LocalLeader>S :keeppattern g/^\s*- \[[^ ]]/t$<CR>
-  au FileType vimwiki vertical resize 80
-  au FileType vimwiki setlocal wrap linebreak winfixwidth sidescrolloff=0 spell
-
-  au Filetype cmake setlocal commentstring=#\ %s
-augroup END
 
 augroup auto_checktime
   au!
@@ -287,11 +265,6 @@ set inccommand=nosplit
 set smartcase
 set hlsearch
 nnoremap / :noh<CR>/
-" Use a function to preserve the / register
-function! GoToFunctionStart()
-  keeppattern ?^\w\+\ze(\|^\w\+.\{-\}\zs\w\+\ze(
-endfunction
-
 nnoremap <C-A-a> m':keeppattern ?^\w<CR>:noh<CR>
 nnoremap <ESC>^[ <ESC>^[
 nnoremap <silent> <CR> :noh<CR><CR>
@@ -366,6 +339,38 @@ augroup my_terminal
   au!
   autocmd BufEnter,TermOpen term://* startinsert
   autocmd BufLeave term://* stopinsert
+augroup END
+
+" Commands
+command! -nargs=1 VimwikiDiaryDay execute "edit "
+      \. "~/vimwiki/diary/"
+      \. systemlist('date --date="<args>" +%Y-%m-%d')[0]
+      \. ".md"
+
+" Type-specific
+augroup type_specific_conf
+  au!
+  au FileType c,cpp setlocal foldmethod=syntax | normal zR
+  au FileType c,cpp setlocal colorcolumn=80 list spell
+  au FileType c,cpp setlocal errorformat^=%I%f:%l:%c:\ note:%m,%I%f:%l:\ note:%m,%f:%l:%c:\ %t%*[^:]:%m,%f:%l:\ %t%*[^:]:%m
+  au FileType c,cpp nnoremap <buffer> <LocalLeader>c :AsyncRun -auto=make clang-tidy -header-filter='^%:h/.*' %<CR>
+  au FileType c,cpp nnoremap <buffer> <LocalLeader>l :tabnew<CR>
+        \:silent 0r ! lizard -ENS -EIgnoreAssert -T length=100 #<CR>
+        \:silent setl nomodified nomodifiable<CR>
+        \:silent nnoremap <buffer> q :tabclose<lt>CR><CR>
+  au FileType c,cpp nnoremap <buffer> <LocalLeader>g :YcmCompleter GoTo<CR>
+  au FileType c,cpp iabbrev <buffer> anoopt __attribute__((optimize("O0")))
+
+  au FileType vimwiki nnoremap <buffer> <LocalLeader>p :VimwikiDiaryPrevDay<CR>
+  au FileType vimwiki nnoremap <buffer> <LocalLeader>n :VimwikiDiaryNextDay<CR>
+  au FileType vimwiki nnoremap <buffer> <LocalLeader>d :VimwikiDiaryDay 
+  au FileType vimwiki nnoremap <buffer> <LocalLeader>o 2o<ESC>:keeppattern s/.*/\="##### " . strftime("%a %D %H:%M")/<CR>o
+  au FileType vimwiki nnoremap <buffer> <LocalLeader>N :keeppattern g/^\s*- \[[^xX]]/t$<CR>
+  au FileType vimwiki nnoremap <buffer> <LocalLeader>S :keeppattern g/^\s*- \[[^ ]]/t$<CR>
+  au FileType vimwiki vertical resize 80
+  au FileType vimwiki setlocal wrap linebreak winfixwidth sidescrolloff=0 spell
+
+  au Filetype cmake setlocal commentstring=#\ %s
 augroup END
 
 set secure
