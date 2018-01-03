@@ -169,7 +169,7 @@ let g:ale_c_lizard_options = '-ENS -EIgnoreAssert -T length=100'
 Plug 'ludovicchabant/vim-gutentags'
 nnoremap <Leader>ug :GutentagsUpdate<CR>
 
-Plug 'Valloric/YouCompleteMe', { 'do': './install.py --clang-completer'  }
+Plug 'Valloric/YouCompleteMe', { 'do': './install.py --clang-completer --rust-completer'  }
 let g:ycm_python_binary_path = 'python'
 let g:ycm_add_preview_to_completeopt = 1
 let g:ycm_autoclose_preview_window_after_insertion = 1
@@ -358,7 +358,7 @@ augroup type_specific_conf
         \:silent 0r ! lizard -ENS -EIgnoreAssert -T length=100 #<CR>
         \:silent setl nomodified nomodifiable<CR>
         \:silent nnoremap <buffer> q :tabclose<lt>CR><CR>
-  au FileType c,cpp nnoremap <buffer> <LocalLeader>g :YcmCompleter GoTo<CR>
+  au FileType c,cpp,rust nnoremap <buffer> <LocalLeader>g :YcmCompleter GoTo<CR>
   au FileType c,cpp iabbrev <buffer> anoopt __attribute__((optimize("O0")))
 
   au FileType vimwiki nnoremap <buffer> <LocalLeader>p :VimwikiDiaryPrevDay<CR>
@@ -371,6 +371,9 @@ augroup type_specific_conf
   au FileType vimwiki setlocal wrap linebreak winfixwidth sidescrolloff=0 spell
 
   au Filetype cmake setlocal commentstring=#\ %s
+
+  au FileType rust compiler cargo
+  au FileType rust setlocal makeprg=cargo\ check
 augroup END
 
 set secure
