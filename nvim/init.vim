@@ -185,14 +185,7 @@ call plug#end()
 
 " Colorscheme
 set background=dark
-if hostname() =~ "Mac"
-  colorscheme nord
-else
-  if(match($TERM, 'screen') < 0)
-    set termguicolors
-  endif
-  colorscheme NeoSolarized
-endif
+colorscheme nord
 
 " Misc
 set exrc
