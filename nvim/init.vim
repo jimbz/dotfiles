@@ -41,17 +41,7 @@ Plug 'tpope/vim-abolish'
 Plug 'tpope/vim-sleuth'
 Plug 'tpope/vim-surround'
 
-" -- Search and motion
-Plug 'chaoren/vim-wordmotion'
-let g:wordmotion_mappings = {
-      \ 'w' : '<Leader>mw',
-      \ 'b' : '<Leader>mb',
-      \ 'e' : '<Leader>me',
-      \ 'ge': '<Leader>mge',
-      \ 'aw': '<Leader>maw',
-      \ 'iw': '<Leader>miw',
-      \ '<C-R><C-W>' : ''
-      \ }
+" -- Search
 Plug 'dyng/ctrlsf.vim'
 
 " -- Textobjects
@@ -65,7 +55,6 @@ Plug 'PeterRincker/vim-argumentative'
 Plug 'kana/vim-altr'
 nmap <Leader>a <Plug>(altr-forward)
 nmap <Leader>A <Plug>(altr-back)
-Plug 'mtth/scratch.vim'
 Plug 'qpkorr/vim-bufkill'
 
 " -- Productivity
@@ -130,7 +119,6 @@ Plug 'SirVer/ultisnips' | Plug 'honza/vim-snippets'
 let g:UltiSnipsExpandTrigger='<c-j>'
 
 " -- Sidebars, status bars
-Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
 Plug 'majutsushi/tagbar'
 Plug 'mbbill/undotree'
 let g:undotree_WindowLayout = 2
@@ -147,9 +135,6 @@ set statusline+=%=
 set statusline+=\ %p%%
 set statusline+=\ %l:%c
 set statusline+=\ 
-
-" -- Debug
-Plug 'huawenyu/neogdb.vim'
 
 " -- Autocomplete / lint
 Plug 'skywind3000/asyncrun.vim'
@@ -175,7 +160,6 @@ let g:ycm_autoclose_preview_window_after_insertion = 1
 Plug 'sheerun/vim-polyglot'
 
 " -- Colorschemes
-Plug 'altercation/vim-colors-solarized'
 Plug 'iCyMind/NeoSolarized'
 Plug 'arcticicestudio/nord-vim'
 Plug 'romainl/Apprentice'
