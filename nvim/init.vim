@@ -112,7 +112,6 @@ nnoremap <Leader>* m':Ag \b<C-R><C-W>\b<CR>
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-rhubarb'
 Plug 'airblade/vim-gitgutter'
-Plug 'jreybert/vimagit'
 
 " -- Snippets
 Plug 'SirVer/ultisnips' | Plug 'honza/vim-snippets'
@@ -236,6 +235,7 @@ match ErrorCharacters "[\u00a0\u1680\u180e\u2000-\u200b\u2014\u202f\u205f\u3000\
 
 " Search
 set inccommand=nosplit
+set ignorecase
 set smartcase
 set hlsearch
 nnoremap / :noh<CR>/
@@ -308,7 +308,7 @@ augroup END
 nnoremap <Leader>th :below 10new +terminal<CR>
 nnoremap <Leader>tv :below vnew +terminal<CR>
 nnoremap <Leader>tt :tabnew +terminal<CR>
-nnoremap <Leader>T :vnew term://tig<CR>
+nnoremap <Leader>T :vnew term://tig --first-parent<CR>
 augroup my_terminal
   au!
   autocmd BufEnter,TermOpen term://* startinsert
@@ -320,6 +320,9 @@ command! -nargs=1 VimwikiDiaryDay execute "edit "
       \. "~/vimwiki/diary/"
       \. systemlist('date --date="<args>" +%Y-%m-%d')[0]
       \. ".md"
+
+" Abbrevs
+iabbrev ymd <C-r>=strftime('%Y%m%d')<CR>
 
 " Type-specific
 augroup type_specific_conf
