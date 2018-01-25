@@ -20,11 +20,10 @@ Plug 'tpope/vim-obsession'
 Plug 'tpope/vim-unimpaired'
 Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-sensible'
+Plug 'tpope/vim-vinegar'
 
 " -- Misc editing
 Plug 'AndrewRadev/linediff.vim'
-Plug 'jiangmiao/auto-pairs'
-let g:AutoPairsFlyMode=1
 Plug 'machakann/vim-highlightedyank'
 Plug 'tommcdo/vim-exchange'
 Plug 'tommcdo/vim-lion'
@@ -44,6 +43,11 @@ Plug 'tpope/vim-surround'
 " -- Search
 Plug 'dyng/ctrlsf.vim'
 
+" -- Web browser
+Plug 'tpope/vim-rhubarb'
+Plug 'szw/vim-g'
+noremap <Leader>K :Googlef<CR>
+
 " -- Textobjects
 Plug 'fvictorio/vim-textobj-backticks'
 Plug 'glts/vim-textobj-comment'
@@ -56,6 +60,7 @@ Plug 'kana/vim-altr'
 nmap <Leader>a <Plug>(altr-forward)
 nmap <Leader>A <Plug>(altr-back)
 Plug 'qpkorr/vim-bufkill'
+let g:BufKillCreateMappings = 0
 
 " -- Productivity
 Plug 'vimwiki/vimwiki'
@@ -110,8 +115,11 @@ nnoremap <Leader>* m':Ag \b<C-R><C-W>\b<CR>
 
 " -- Git
 Plug 'tpope/vim-fugitive'
-Plug 'tpope/vim-rhubarb'
+nmap <Leader>gg :Gstatus<CR>
 Plug 'airblade/vim-gitgutter'
+nmap <Leader>gs <Plug>GitGutterStageHunk
+nmap <Leader>gu <Plug>GitGutterUndoHunk
+nmap <Leader>gp <Plug>GitGutterPreviewHunk
 
 " -- Snippets
 Plug 'SirVer/ultisnips' | Plug 'honza/vim-snippets'
@@ -343,9 +351,9 @@ augroup type_specific_conf
   au FileType vimwiki nnoremap <buffer> <LocalLeader>d :VimwikiDiaryDay 
   au FileType vimwiki nnoremap <buffer> <LocalLeader>o 2o<ESC>:keeppattern s/.*/\="##### " . strftime("%a %D %H:%M")/<CR>o
   au FileType vimwiki nnoremap <buffer> <LocalLeader>N :keeppattern g/^\s*- \[[^xX]]/t$<CR>
-  au FileType vimwiki nnoremap <buffer> <LocalLeader>S :keeppattern g/^\s*- \[[^ ]]/t$<CR>
-  au FileType vimwiki vertical resize 80
-  au FileType vimwiki setlocal wrap linebreak winfixwidth sidescrolloff=0 spell
+  au FileType vimwiki nnoremap <buffer> <LocalLeader>s :keeppattern g/^\s*- \[[^ ]]/t$<CR>
+  au FileType vimwiki nnoremap <buffer> <LocalLeader>S mmo# Summary<ESC>:keeppattern g/^\s*- \[[^ ]]/t$<CR>o<C-u><CR><CR># Next<ESC>:keeppattern 0,'mg/^\s*- \[[^xX]]/t$<CR>
+  au FileType vimwiki setlocal wrap linebreak sidescrolloff=0 spell
 
   au Filetype cmake setlocal commentstring=#\ %s
 
