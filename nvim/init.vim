@@ -39,6 +39,7 @@ vmap <Leader>;y yP`[v`]gc']j
 Plug 'tpope/vim-abolish'
 Plug 'tpope/vim-sleuth'
 Plug 'tpope/vim-surround'
+Plug 'jceb/vim-editqf'
 
 " -- Search
 Plug 'dyng/ctrlsf.vim'
@@ -97,6 +98,11 @@ command! -bang -nargs=* Ag
   \                 <bang>0 ? fzf#vim#with_preview('up:60%')
   \                         : fzf#vim#with_preview('right:50%:hidden', '?'),
   \                 <bang>0)
+command! -bang -nargs=* -complete=dir Agg
+  \ call fzf#vim#ag_raw(<q-args>,
+  \                 <bang>0 ? fzf#vim#with_preview('up:60%')
+  \                         : fzf#vim#with_preview('right:50%:hidden', '?'),
+  \                 <bang>0)
 nnoremap <Leader>p :GitFiles<CR>
 nnoremap <Leader>f :Files<CR>
 nnoremap <Leader>r :History<CR>
@@ -127,6 +133,9 @@ let g:UltiSnipsExpandTrigger='<c-j>'
 
 " -- Sidebars, status bars
 Plug 'majutsushi/tagbar'
+let g:tagbar_sort = 0
+let g:tagbar_compact = 1
+nnoremap <Leader>T :TagbarOpenAutoClose<CR>
 Plug 'mbbill/undotree'
 let g:undotree_WindowLayout = 2
 
@@ -150,7 +159,7 @@ nnoremap <Leader>m :Make<CR>
 nnoremap <Leader>k :AsyncStop<CR>
 augroup qf_toggle
   au!
-  autocmd QuickFixCmdPost * call asyncrun#quickfix_toggle(12, 1)
+  autocmd User AsyncRunStart call asyncrun#quickfix_toggle(12, 1)
 augroup END
 Plug 'w0rp/ale'
 let g:ale_c_lizard_options = '-ENS -EIgnoreAssert -T length=100'
@@ -170,6 +179,9 @@ Plug 'sheerun/vim-polyglot'
 Plug 'iCyMind/NeoSolarized'
 Plug 'arcticicestudio/nord-vim'
 Plug 'romainl/Apprentice'
+
+" -- Debugger
+Plug 'sakhnik/nvim-gdb'
 
 " Initialize plugin system
 call plug#end()
@@ -291,7 +303,9 @@ inoremap <A-Home> gT
 nnoremap <A-End> gt
 nnoremap <A-Home> gT
 
-nnoremap <Leader>z :tab split<CR>
+nnoremap <Leader>ts :tab split<CR>
+nnoremap <Leader>tn :tab new<CR>
+nnoremap <Leader>tc :tabclose<CR>
 
 augroup my_quickfix
   au!
@@ -316,7 +330,7 @@ augroup END
 nnoremap <Leader>th :below 10new +terminal<CR>
 nnoremap <Leader>tv :below vnew +terminal<CR>
 nnoremap <Leader>tt :tabnew +terminal<CR>
-nnoremap <Leader>T :vnew term://tig --first-parent<CR>
+nnoremap <Leader>gt :vnew term://tig --first-parent<CR>
 augroup my_terminal
   au!
   autocmd BufEnter,TermOpen term://* startinsert
