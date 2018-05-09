@@ -204,6 +204,8 @@ set nowrap
 set undofile
 set updatetime=100
 
+nnoremap <Leader>c :echo systemlist('date')[0]<CR>
+
 augroup auto_checktime
   au!
   autocmd BufEnter,FocusGained * checktime
