@@ -121,7 +121,7 @@ nnoremap <Leader>* m':Ag \b<C-R><C-W>\b<CR>
 
 " -- Git
 Plug 'tpope/vim-fugitive'
-nmap <Leader>gg :Gstatus<CR>
+nmap <Leader>gg :Gstatus<CR><C-w>K
 Plug 'airblade/vim-gitgutter'
 nmap <Leader>gs <Plug>GitGutterStageHunk
 nmap <Leader>gu <Plug>GitGutterUndoHunk
@@ -167,7 +167,7 @@ let g:ale_c_lizard_options = '-ENS -EIgnoreAssert -T length=100'
 Plug 'ludovicchabant/vim-gutentags'
 nnoremap <Leader>ug :GutentagsUpdate<CR>
 
-Plug 'Valloric/YouCompleteMe', { 'do': './install.py --clang-completer --rust-completer'  }
+Plug 'Valloric/YouCompleteMe', { 'do': './install.py --quiet --clang-completer --rust-completer'  }
 let g:ycm_python_binary_path = 'python'
 let g:ycm_add_preview_to_completeopt = 1
 let g:ycm_autoclose_preview_window_after_insertion = 1
@@ -187,6 +187,9 @@ Plug 'sakhnik/nvim-gdb'
 call plug#end()
 
 " Colorscheme
+if $TERM ==# 'stterm-256color'
+  set termguicolors
+endif
 set background=dark
 colorscheme nord
 
@@ -199,10 +202,11 @@ set hidden
 set showmode
 set nowrap
 set undofile
+set updatetime=100
 
 augroup auto_checktime
   au!
-  autocmd BufEnter,FocusGained,CursorHold,CursorHoldI * checktime
+  autocmd BufEnter,FocusGained * checktime
 augroup END
 
 " From defaults.vim
@@ -263,12 +267,6 @@ nnoremap <C-A-a> m':keeppattern ?^\w<CR>:noh<CR>
 nnoremap <ESC>^[ <ESC>^[
 nnoremap <silent> <CR> :noh<CR><CR>
 nnoremap <silent> <ESC> :noh<CR><ESC>
-nnoremap <silent> i :noh<CR>i
-nnoremap <silent> I :noh<CR>I
-nnoremap <silent> a :noh<CR>a
-nnoremap <silent> A :noh<CR>A
-nnoremap <silent> o :noh<CR>o
-nnoremap <silent> O :noh<CR>O
 
 " Windows
 nnoremap <Leader><Tab> <C-^>
