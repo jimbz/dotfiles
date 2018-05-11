@@ -122,6 +122,8 @@ nnoremap <Leader>* m':Ag \b<C-R><C-W>\b<CR>
 " -- Git
 Plug 'tpope/vim-fugitive'
 nmap <Leader>gg :Gstatus<CR><C-w>K
+nmap <Leader>gc :Gcommit -v<CR>
+nmap <Leader>gC :Gcommit --amend -v<CR>
 Plug 'airblade/vim-gitgutter'
 nmap <Leader>gs <Plug>GitGutterStageHunk
 nmap <Leader>gu <Plug>GitGutterUndoHunk
