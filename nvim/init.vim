@@ -111,8 +111,8 @@ nnoremap <Leader>o m':BTags<CR>
 nnoremap <Leader>O m':Tags<CR>
 nnoremap <Leader>l m':BLines<CR>
 nnoremap <Leader>L m':Lines<CR>
-nnoremap <Leader>c m':BCommits<CR>
-nnoremap <Leader>C m':Commits<CR>
+nnoremap <Leader>gl m':BCommits<CR>
+nnoremap <Leader>gL m':Commits<CR>
 nnoremap <Leader>: :Commands<CR>
 
 nnoremap <Leader>/ m':Ag<CR>
@@ -128,6 +128,11 @@ Plug 'airblade/vim-gitgutter'
 nmap <Leader>gs <Plug>GitGutterStageHunk
 nmap <Leader>gu <Plug>GitGutterUndoHunk
 nmap <Leader>gp <Plug>GitGutterPreviewHunk
+" Fix conflict with textobj-comment
+omap iC <Plug>GitGutterTextObjectInnerPending
+omap aC <Plug>GitGutterTextObjectOuterPending
+xmap iC <Plug>GitGutterTextObjectInnerVisual
+xmap aC <Plug>GitGutterTextObjectOuterVisual
 
 " -- Snippets
 Plug 'SirVer/ultisnips' | Plug 'honza/vim-snippets'
@@ -203,7 +208,7 @@ set cinoptions=(0
 set wildmode=longest:full,full
 set mouse=a
 set hidden
-set showmode
+set noshowmode
 set nowrap
 set undofile
 set updatetime=100
@@ -273,6 +278,7 @@ nnoremap <C-A-a> m':keeppattern ?^\w<CR>:noh<CR>
 nnoremap <ESC>^[ <ESC>^[
 nnoremap <silent> <CR> :noh<CR><CR>
 nnoremap <silent> <ESC> :noh<CR><ESC>
+nnoremap & :keepjumps normal *#<cr>
 
 " Windows
 nnoremap <Leader><Tab> <C-^>
@@ -306,6 +312,8 @@ nnoremap <A-l> <C-w>l
 
 tnoremap <A-End> <C-\><C-N>gt
 tnoremap <A-Home> <C-\><C-N>gT
+tnoremap <C-PageUp> <C-\><C-N>gT
+tnoremap <C-PageDown> <C-\><C-N>gt
 inoremap <A-End> gt
 inoremap <A-Home> gT
 nnoremap <A-End> gt
@@ -357,7 +365,6 @@ iabbrev ymd <C-r>=strftime('%Y%m%d')<CR>
 " Type-specific
 augroup type_specific_conf
   au!
-  au FileType c,cpp setlocal foldmethod=syntax | normal zR
   au FileType c,cpp setlocal colorcolumn=80 list spell
   au FileType c,cpp setlocal errorformat^=%I%f:%l:%c:\ note:%m,%I%f:%l:\ note:%m,%f:%l:%c:\ %t%*[^:]:%m,%f:%l:\ %t%*[^:]:%m
   au FileType c,cpp nnoremap <buffer> <LocalLeader>c :AsyncRun -auto=make clang-tidy -header-filter='^%:h/.*' %<CR>
@@ -365,8 +372,9 @@ augroup type_specific_conf
         \:silent 0r ! lizard -ENS -EIgnoreAssert -T length=100 #<CR>
         \:silent setl nomodified nomodifiable<CR>
         \:silent nnoremap <buffer> q :tabclose<lt>CR><CR>
-  au FileType c,cpp,rust nnoremap <buffer> <LocalLeader>g :YcmCompleter GoTo<CR>
   au FileType c,cpp iabbrev <buffer> anoopt __attribute__((optimize("O0")))
+
+  au FileType c,cpp,rust nnoremap <buffer> <LocalLeader>g :YcmCompleter GoTo<CR>
 
   au FileType vimwiki nnoremap <buffer> <LocalLeader>p :VimwikiDiaryPrevDay<CR>
   au FileType vimwiki nnoremap <buffer> <LocalLeader>n :VimwikiDiaryNextDay<CR>
