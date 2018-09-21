@@ -372,7 +372,9 @@ augroup type_specific_conf
         \:silent 0r ! lizard -ENS -EIgnoreAssert -T length=100 #<CR>
         \:silent setl nomodified nomodifiable<CR>
         \:silent nnoremap <buffer> q :tabclose<lt>CR><CR>
-  au FileType c,cpp iabbrev <buffer> anoopt __attribute__((optimize("O0")))
+  au FileType c,cpp iabbrev <buffer> anoo __attribute__((optimize("O0"))) // FIXME
+  au FileType c,cpp iabbrev <buffer> gnoo #pragma GCC optimize("O0") // FIXME
+  au FileType c,cpp iabbrev <buffer> cnoo #pragma clang optimize off // FIXME
 
   au FileType c,cpp,rust nnoremap <buffer> <LocalLeader>g :YcmCompleter GoTo<CR>
 
