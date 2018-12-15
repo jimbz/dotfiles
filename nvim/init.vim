@@ -24,6 +24,8 @@ Plug 'tpope/vim-vinegar'
 
 " -- Misc editing
 Plug 'AndrewRadev/linediff.vim'
+Plug 'jceb/vim-editqf'
+Plug 'junegunn/goyo.vim'
 Plug 'machakann/vim-highlightedyank'
 Plug 'tommcdo/vim-exchange'
 Plug 'tommcdo/vim-lion'
@@ -39,7 +41,6 @@ vmap <Leader>;y yP`[v`]gc']j
 Plug 'tpope/vim-abolish'
 Plug 'tpope/vim-sleuth'
 Plug 'tpope/vim-surround'
-Plug 'jceb/vim-editqf'
 
 " -- Search
 Plug 'dyng/ctrlsf.vim'
@@ -133,6 +134,7 @@ omap iC <Plug>GitGutterTextObjectInnerPending
 omap aC <Plug>GitGutterTextObjectOuterPending
 xmap iC <Plug>GitGutterTextObjectInnerVisual
 xmap aC <Plug>GitGutterTextObjectOuterVisual
+Plug 'junegunn/gv.vim'
 
 " -- Snippets
 Plug 'SirVer/ultisnips' | Plug 'honza/vim-snippets'
@@ -161,7 +163,7 @@ set statusline+=\
 
 " -- Autocomplete / lint
 Plug 'skywind3000/asyncrun.vim'
-command! -bang -nargs=* -complete=file Make AsyncRun -auto=make -save=2 -program=make @ <args>
+command! -bang -nargs=* -complete=file Make AsyncRun<bang> -save=2 -post=checktime -program=make @ <args>
 nnoremap <Leader>m :Make<CR>
 nnoremap <Leader>k :AsyncStop<CR>
 augroup qf_toggle
@@ -188,6 +190,7 @@ Plug 'sheerun/vim-polyglot'
 Plug 'iCyMind/NeoSolarized'
 Plug 'arcticicestudio/nord-vim'
 Plug 'romainl/Apprentice'
+Plug 'tomasr/molokai'
 
 " -- Debugger
 Plug 'sakhnik/nvim-gdb'
@@ -200,7 +203,7 @@ if $TERM ==# 'stterm-256color'
   set termguicolors
 endif
 set background=dark
-colorscheme nord
+colorscheme molokai
 
 " Misc
 set exrc
@@ -376,7 +379,7 @@ augroup type_specific_conf
   au FileType c,cpp iabbrev <buffer> gnoo #pragma GCC optimize("O0") // FIXME
   au FileType c,cpp iabbrev <buffer> cnoo #pragma clang optimize off // FIXME
 
-  au FileType c,cpp,rust nnoremap <buffer> <LocalLeader>g :YcmCompleter GoTo<CR>
+  au FileType c,cpp,rust,python nnoremap <buffer> <LocalLeader>g :YcmCompleter GoTo<CR>
 
   au FileType vimwiki nnoremap <buffer> <LocalLeader>p :VimwikiDiaryPrevDay<CR>
   au FileType vimwiki nnoremap <buffer> <LocalLeader>n :VimwikiDiaryNextDay<CR>
@@ -384,7 +387,7 @@ augroup type_specific_conf
   au FileType vimwiki nnoremap <buffer> <LocalLeader>o 2o<ESC>:keeppattern s/.*/\="##### " . strftime("%a %D %H:%M")/<CR>o
   au FileType vimwiki nnoremap <buffer> <LocalLeader>N :keeppattern g/^\s*- \[[^xX]]/t$<CR>
   au FileType vimwiki nnoremap <buffer> <LocalLeader>s :keeppattern g/^\s*- \[[^ ]]/t$<CR>
-  au FileType vimwiki nnoremap <buffer> <LocalLeader>S mmo# Summary<ESC>:keeppattern g/^\s*- \[[^ ]]/t$<CR>o<C-u><CR><CR># Next<ESC>:keeppattern 0,'mg/^\s*- \[[^xX]]/t$<CR>
+  au FileType vimwiki nnoremap <buffer> <LocalLeader>S mmo# Summary<ESC>:keeppattern g/^\s*- \[[^ ]]/t$<CR>o<C-u><CR><CR># Next<CR><ESC>mnk:keeppattern 0,'mg/^# Backlog\\|^# Plan\\|^\s*- \[[^xX]]/t$<CR>:keeppattern 'n,$s/^#/##<CR>'nddG
   au FileType vimwiki setlocal wrap linebreak sidescrolloff=0 spell
 
   au Filetype cmake setlocal commentstring=#\ %s
