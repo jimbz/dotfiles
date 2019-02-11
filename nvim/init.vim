@@ -172,6 +172,7 @@ augroup qf_toggle
 augroup END
 Plug 'w0rp/ale'
 let g:ale_c_lizard_options = '-ENS -EIgnoreAssert -T length=100'
+let g:ale_python_auto_pipenv = 1
 
 Plug 'ludovicchabant/vim-gutentags'
 nnoremap <Leader>ug :GutentagsUpdate<CR>
@@ -190,10 +191,11 @@ Plug 'sheerun/vim-polyglot'
 Plug 'iCyMind/NeoSolarized'
 Plug 'arcticicestudio/nord-vim'
 Plug 'romainl/Apprentice'
-Plug 'tomasr/molokai'
+" Plug 'tomasr/molokai'
+Plug 'shime/molokai'
 
 " -- Debugger
-Plug 'sakhnik/nvim-gdb'
+Plug 'sakhnik/nvim-gdb', { 'do': './install.sh' }
 
 " Initialize plugin system
 call plug#end()
@@ -333,16 +335,6 @@ augroup my_quickfix
   " equivalent to the Ctrl+W, Shift+J shortcut telling Vim to move a window to
   " the very bottom (see :help :wincmd and :help ^WJ).
   au FileType qf wincmd J
-augroup END
-
-" Tags
-augroup my_c_cpp_tags
-  au!
-  set cscopeprg=gtags-cscope
-  set cscopetag
-  set cscopequickfix=s-,d-,c-,t-,e-,i-,a-
-  au FileType c,cpp nnoremap <buffer> <LocalLeader>t :AsyncRun global -u<CR>
-  au FileType c,cpp nnoremap <buffer> <LocalLeader>s :cs find s <C-R>=expand("<cword>")<CR><CR>:copen<CR>
 augroup END
 
 " Terminal
