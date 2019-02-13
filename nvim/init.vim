@@ -19,6 +19,7 @@ Plug 'tpope/vim-eunuch'
 Plug 'tpope/vim-obsession'
 Plug 'tpope/vim-unimpaired'
 Plug 'tpope/vim-repeat'
+Plug 'tpope/vim-rsi'
 Plug 'tpope/vim-sensible'
 Plug 'tpope/vim-vinegar'
 
