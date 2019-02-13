@@ -182,8 +182,34 @@ Plug 'Valloric/YouCompleteMe', { 'do': './install.py --quiet --clang-completer -
 let g:ycm_python_binary_path = 'python'
 let g:ycm_add_preview_to_completeopt = 1
 let g:ycm_autoclose_preview_window_after_insertion = 1
+let g:ycm_filetype_blacklist = {
+      \ 'c': 1,
+      \ 'cpp': 1,
+      \ 'objc': 1,
+      \ 'objcpp': 1,
+      \}
 
 Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
+
+Plug 'neoclide/coc.nvim', {'tag': '*', 'do': { -> coc#util#install()}}
+let g:coc_user_config = {
+      \  'languageserver': {
+      \    'ccls': {
+      \      'command': 'ccls',
+      \      'filetypes': ['c', 'cpp', 'objc', 'objcpp'],
+      \        'rootPatterns': ['.ccls', 'compile_commands.json', '.vim/', '.git/', '.hg/'],
+      \        'initializationOptions': {
+      \                'cacheDirectory': '/tmp/ccls'
+      \        }
+      \    }
+      \  }
+      \}
+augroup coc_global
+    " autocmd User CocNvimInit highlight! CocHighlightText cterm=bold gui=bold ctermfg=NONE ctermbg=NONE guifg=NONE guibg=NONE
+    " autocmd User CocNvimInit highlight! link CocHighlightText StatusLine
+    autocmd User CocNvimInit highlight! link CocHighlightText Search
+    autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
+augroup END
 
 " -- Highlighting
 Plug 'sheerun/vim-polyglot'
@@ -358,6 +384,24 @@ command! -nargs=1 VimwikiDiaryDay execute "edit "
 " Abbrevs
 iabbrev ymd <C-r>=strftime('%Y%m%d')<CR>
 
+function! s:init_coc() abort
+  " Use <c-space> for trigger completion.
+  inoremap <buffer> <silent><expr> <c-space> coc#refresh()
+
+  " Remap keys for gotos
+  nmap <buffer> <silent> <localleader>gd <Plug>(coc-definition)
+  nmap <buffer> <silent> <localleader><localleader> <Plug>(coc-definition)
+  nmap <buffer> <silent> <localleader>gD <Plug>(coc-type-definition)
+  nmap <buffer> <silent> <localleader>gi <Plug>(coc-implementation)
+  nmap <buffer> <silent> <localleader>gr <Plug>(coc-references)
+
+  " Remap for rename current word
+  nmap <buffer> <localleader>r <Plug>(coc-rename)
+
+  " Use k for show documentation in preview window
+  nnoremap <buffer> <silent> <localleader>k :call CocAction('doHover')<CR>
+endfunction
+
 " Type-specific
 augroup type_specific_conf
   au!
@@ -372,7 +416,8 @@ augroup type_specific_conf
   au FileType c,cpp iabbrev <buffer> gnoo #pragma GCC optimize("O0") // FIXME
   au FileType c,cpp iabbrev <buffer> cnoo #pragma clang optimize off // FIXME
 
-  au FileType c,cpp,rust,python nnoremap <buffer> <LocalLeader>g :YcmCompleter GoTo<CR>
+  au FileType rust,python nnoremap <buffer> <LocalLeader><LocalLeader> :YcmCompleter GoTo<CR>
+  au FileType c,cpp call s:init_coc()
 
   au FileType vimwiki nnoremap <buffer> <LocalLeader>p :VimwikiDiaryPrevDay<CR>
   au FileType vimwiki nnoremap <buffer> <LocalLeader>n :VimwikiDiaryNextDay<CR>
