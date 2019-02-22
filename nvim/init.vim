@@ -213,6 +213,7 @@ augroup END
 
 " -- Highlighting
 Plug 'sheerun/vim-polyglot'
+Plug 'ekalinin/Dockerfile.vim'  " polyglot version does not work: https://github.com/sheerun/vim-polyglot/issues/361
 
 " -- Colorschemes
 Plug 'iCyMind/NeoSolarized'
@@ -401,6 +402,9 @@ function! s:init_coc() abort
   " Use k for show documentation in preview window
   nnoremap <buffer> <silent> <localleader>k :call CocAction('doHover')<CR>
 endfunction
+
+" Default
+nmap <LocalLeader><LocalLeader> gd
 
 " Type-specific
 augroup type_specific_conf
