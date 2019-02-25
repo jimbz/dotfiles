@@ -436,6 +436,8 @@ augroup type_specific_conf
 
   au FileType rust compiler cargo
   au FileType rust setlocal makeprg=cargo\ check
+
+  au FileType tex let g:LatexBox_latexmk_preview_continuously=1 | let g:LatexBox_quickfix=2
 augroup END
 
 set secure
