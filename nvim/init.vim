@@ -229,7 +229,7 @@ Plug 'sakhnik/nvim-gdb', { 'do': './install.sh' }
 call plug#end()
 
 " Colorscheme
-if $TERM ==# 'stterm-256color'
+if $TERM ==# 'stterm-256color' || $TERM ==# 'xterm-kitty'
   set termguicolors
 endif
 set background=dark
