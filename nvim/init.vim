@@ -138,8 +138,13 @@ xmap aC <Plug>GitGutterTextObjectOuterVisual
 Plug 'junegunn/gv.vim'
 
 " -- Snippets
-Plug 'SirVer/ultisnips' | Plug 'honza/vim-snippets'
-let g:UltiSnipsExpandTrigger='<c-j>'
+Plug 'Shougo/neosnippet'
+Plug 'Shougo/neosnippet-snippets'
+imap <C-j>     <Plug>(neosnippet_expand_or_jump)
+smap <C-j>     <Plug>(neosnippet_expand_or_jump)
+xmap <C-j>     <Plug>(neosnippet_expand_target)
+" Plug 'SirVer/ultisnips' | Plug 'honza/vim-snippets'
+" let g:UltiSnipsExpandTrigger='<c-j>'
 
 " -- Sidebars, status bars
 Plug 'majutsushi/tagbar'
@@ -190,25 +195,48 @@ let g:ycm_filetype_blacklist = {
       \}
 
 Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
+let g:go_quickfix_height = 10
 
-Plug 'neoclide/coc.nvim', {'tag': '*', 'do': { -> coc#util#install()}}
-let g:coc_user_config = {
-      \  'languageserver': {
-      \    'ccls': {
-      \      'command': 'ccls',
-      \      'filetypes': ['c', 'cpp', 'objc', 'objcpp'],
-      \        'rootPatterns': ['.ccls', 'compile_commands.json', '.vim/', '.git/', '.hg/'],
-      \        'initializationOptions': {
-      \                'cacheDirectory': '/tmp/ccls'
-      \        }
-      \    }
-      \  }
-      \}
-augroup coc_global
-    " autocmd User CocNvimInit highlight! CocHighlightText cterm=bold gui=bold ctermfg=NONE ctermbg=NONE guifg=NONE guibg=NONE
-    " autocmd User CocNvimInit highlight! link CocHighlightText StatusLine
-    autocmd User CocNvimInit highlight! link CocHighlightText Search
-    autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
+" Plug 'neoclide/coc.nvim', {'tag': '*', 'do': { -> coc#util#install()}}
+" let g:coc_user_config = {
+"       \  'languageserver': {
+"       \    'ccls': {
+"       \      'command': 'ccls',
+"       \      'filetypes': ['c', 'cpp', 'objc', 'objcpp'],
+"       \        'rootPatterns': ['.ccls', 'compile_commands.json', '.vim/', '.git/', '.hg/'],
+"       \        'initializationOptions': {
+"       \                'cacheDirectory': '/tmp/ccls'
+"       \        }
+"       \    }
+"       \  }
+"       \}
+" augroup coc_global
+"     " autocmd User CocNvimInit highlight! CocHighlightText cterm=bold gui=bold ctermfg=NONE ctermbg=NONE guifg=NONE guibg=NONE
+"     " autocmd User CocNvimInit highlight! link CocHighlightText StatusLine
+"     autocmd User CocNvimInit highlight! link CocHighlightText Search
+"     autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
+" augroup END
+
+Plug 'roxma/nvim-yarp'
+Plug 'ncm2/ncm2'
+Plug 'ncm2/ncm2-bufword'
+Plug 'ncm2/ncm2-neosnippet'
+Plug 'ncm2/ncm2-path'
+Plug 'ncm2/ncm2-tagprefix'
+
+Plug 'autozimu/LanguageClient-neovim', {
+    \ 'branch': 'next',
+    \ 'do': 'bash install.sh',
+    \ }
+let g:LanguageClient_serverCommands = {
+      \ 'c':    ['ccls', '--log-file=/tmp/ccls.log'],
+      \ 'cpp':  ['ccls', '--log-file=/tmp/ccls.log'],
+      \ 'objc': ['ccls', '--log-file=/tmp/ccls.log'],
+      \ }
+augroup my_ncm2
+  au!
+  au User Ncm2PopupOpen set completeopt=noinsert,menuone,noselect
+  au User Ncm2PopupClose set completeopt=menuone
 augroup END
 
 " -- Highlighting
@@ -385,22 +413,36 @@ command! -nargs=1 VimwikiDiaryDay execute "edit "
 " Abbrevs
 iabbrev ymd <C-r>=strftime('%Y%m%d')<CR>
 
-function! s:init_coc() abort
-  " Use <c-space> for trigger completion.
-  inoremap <buffer> <silent><expr> <c-space> coc#refresh()
+function! s:init_lsp() abort
+  " " Use <c-space> for trigger completion.
+  " inoremap <buffer> <silent><expr> <c-space> coc#refresh()
 
-  " Remap keys for gotos
-  nmap <buffer> <silent> <localleader>gd <Plug>(coc-definition)
-  nmap <buffer> <silent> <localleader><localleader> <Plug>(coc-definition)
-  nmap <buffer> <silent> <localleader>gD <Plug>(coc-type-definition)
-  nmap <buffer> <silent> <localleader>gi <Plug>(coc-implementation)
-  nmap <buffer> <silent> <localleader>gr <Plug>(coc-references)
+  " " Remap keys for gotos
+  " nmap <buffer> <silent> <localleader>gd <Plug>(coc-definition)
+  " nmap <buffer> <silent> <localleader><localleader> <Plug>(coc-definition)
+  " nmap <buffer> <silent> <localleader>gD <Plug>(coc-type-definition)
+  " nmap <buffer> <silent> <localleader>gi <Plug>(coc-implementation)
+  " nmap <buffer> <silent> <localleader>gr <Plug>(coc-references)
 
-  " Remap for rename current word
-  nmap <buffer> <localleader>r <Plug>(coc-rename)
+  " " Remap for rename current word
+  " nmap <buffer> <localleader>r <Plug>(coc-rename)
 
-  " Use k for show documentation in preview window
-  nnoremap <buffer> <silent> <localleader>k :call CocAction('doHover')<CR>
+  " " Use k for show documentation in preview window
+  " nnoremap <buffer> <silent> <localleader>k :call CocAction('doHover')<CR>
+
+
+  call ncm2#enable_for_buffer()
+  nnoremap <buffer> <silent> <LocalLeader>C :call LanguageClient_contextMenu()<CR>
+  nnoremap <buffer> <silent> <LocalLeader>k :call LanguageClient#textDocument_hover()<CR>
+  nnoremap <buffer> <silent> <LocalLeader><LocalLeader> :call LanguageClient#textDocument_definition()<CR>
+  nnoremap <buffer> <silent> <LocalLeader>gd :call LanguageClient#textDocument_definition()<CR>
+  nnoremap <buffer> <silent> <LocalLeader>gr :call LanguageClient#textDocument_references()<CR>
+  nnoremap <buffer> <silent> <LocalLeader>r :call LanguageClient#textDocument_rename()<CR>
+
+  " For neosnippet conceal markers.
+  if has('conceal')
+    setlocal conceallevel=2 concealcursor=niv
+  endif
 endfunction
 
 " Default
@@ -421,7 +463,7 @@ augroup type_specific_conf
   au FileType c,cpp iabbrev <buffer> cnoo #pragma clang optimize off // FIXME
 
   au FileType rust,python nnoremap <buffer> <LocalLeader><LocalLeader> :YcmCompleter GoTo<CR>
-  au FileType c,cpp call s:init_coc()
+  au FileType c,cpp call s:init_lsp()
 
   au FileType vimwiki nnoremap <buffer> <LocalLeader>p :VimwikiDiaryPrevDay<CR>
   au FileType vimwiki nnoremap <buffer> <LocalLeader>n :VimwikiDiaryNextDay<CR>
