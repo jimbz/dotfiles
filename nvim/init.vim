@@ -238,6 +238,7 @@ augroup my_ncm2
   au User Ncm2PopupOpen set completeopt=noinsert,menuone,noselect
   au User Ncm2PopupClose set completeopt=menuone
 augroup END
+let g:gutentags_ctags_extra_args = ['--exclude=*.ccls-cache/*']
 
 " -- Highlighting
 Plug 'sheerun/vim-polyglot'
