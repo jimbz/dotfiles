@@ -179,6 +179,10 @@ augroup END
 Plug 'w0rp/ale'
 let g:ale_c_lizard_options = '-ENS -EIgnoreAssert -T length=100'
 let g:ale_python_auto_pipenv = 1
+let g:ale_linters = {
+      \ 'cpp': ['clangtidy'],
+      \ 'c': ['clangtidy']
+      \ }
 
 Plug 'ludovicchabant/vim-gutentags'
 nnoremap <Leader>ug :GutentagsUpdate<CR>
@@ -430,7 +434,6 @@ function! s:init_lsp() abort
 
   " " Use k for show documentation in preview window
   " nnoremap <buffer> <silent> <localleader>k :call CocAction('doHover')<CR>
-
 
   call ncm2#enable_for_buffer()
   nnoremap <buffer> <silent> <LocalLeader>C :call LanguageClient_contextMenu()<CR>
