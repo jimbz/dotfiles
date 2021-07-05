@@ -13,7 +13,9 @@ let g:mapleader=' '
 let g:maplocalleader=','
 
 " -- Misc system
-Plug 'airblade/vim-rooter'
+Plug 'jpalardy/vim-slime'
+let g:slime_target = 'neovim'
+
 Plug 'tmux-plugins/vim-tmux-focus-events'
 Plug 'tpope/vim-eunuch'
 Plug 'tpope/vim-obsession'
@@ -26,7 +28,6 @@ Plug 'tpope/vim-vinegar'
 " -- Misc editing
 Plug 'AndrewRadev/linediff.vim'
 Plug 'jceb/vim-editqf'
-Plug 'junegunn/goyo.vim'
 Plug 'machakann/vim-highlightedyank'
 Plug 'tommcdo/vim-exchange'
 Plug 'tommcdo/vim-lion'
@@ -43,10 +44,9 @@ Plug 'tpope/vim-abolish'
 Plug 'tpope/vim-sleuth'
 Plug 'tpope/vim-surround'
 
-" -- Search
-Plug 'dyng/ctrlsf.vim'
-
 " -- Web browser
+Plug 'shumphrey/fugitive-gitlab.vim'
+let g:fugitive_gitlab_domains = ['https://gl.phiar.net']
 Plug 'tpope/vim-rhubarb'
 Plug 'szw/vim-g'
 noremap <Leader>K :Googlef<CR>
@@ -61,65 +61,13 @@ Plug 'PeterRincker/vim-argumentative'
 " -- Buffers
 Plug 'kana/vim-altr'
 nmap <Leader>a <Plug>(altr-forward)
-nmap <Leader>A <Plug>(altr-back)
+"nmap <Leader>A <Plug>(altr-back)
 Plug 'qpkorr/vim-bufkill'
 let g:BufKillCreateMappings = 0
 
 " -- Productivity
 Plug 'vimwiki/vimwiki'
 let g:vimwiki_list = [{'syntax': 'markdown', 'ext': '.md'}]
-Plug 'vitalk/vim-simple-todo'
-let g:simple_todo_map_keys = 0
-nmap <Leader>si <Plug>(simple-todo-new)
-nmap <Leader>sI <Plug>(simple-todo-new-start-of-line)
-nmap <Leader>so <Plug>(simple-todo-below)
-nmap <Leader>sO <Plug>(simple-todo-above)
-nmap <Leader>sx <Plug>(simple-todo-mark-as-done)
-nmap <Leader>sX <Plug>(simple-todo-mark-as-undone)
-nmap <Leader>ss <Plug>(simple-todo-mark-switch)
-vmap <Leader>sI <Plug>(simple-todo-new-start-of-line)
-vmap <Leader>sX <Plug>(simple-todo-mark-as-undone)
-vmap <Leader>sx <Plug>(simple-todo-mark-as-done)
-vmap <Leader>ss <Plug>(simple-todo-mark-switch)
-
-" -- FZF
-Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
-Plug 'junegunn/fzf.vim'
-let g:fzf_commits_log_options = '--graph --color=always --format="%C(auto)%h %<(18,trunc)%an%d %s %C(bold)%cr"'
-" Augmenting Ag command using fzf#vim#with_preview function
-"   * fzf#vim#with_preview([[options], preview window, [toggle keys...]])
-"     * For syntax-highlighting, Ruby and any of the following tools are required:
-"       - Highlight: http://www.andre-simon.de/doku/highlight/en/highlight.php
-"       - CodeRay: http://coderay.rubychan.de/
-"       - Rouge: https://github.com/jneen/rouge
-"
-"   :Ag  - Start fzf with hidden preview window that can be enabled with "?" key
-"   :Ag! - Start fzf in fullscreen and display the preview window above
-command! -bang -nargs=* Ag
-  \ call fzf#vim#ag(<q-args>,
-  \                 <bang>0 ? fzf#vim#with_preview('up:60%')
-  \                         : fzf#vim#with_preview('right:50%:hidden', '?'),
-  \                 <bang>0)
-command! -bang -nargs=* -complete=dir Agg
-  \ call fzf#vim#ag_raw(<q-args>,
-  \                 <bang>0 ? fzf#vim#with_preview('up:60%')
-  \                         : fzf#vim#with_preview('right:50%:hidden', '?'),
-  \                 <bang>0)
-nnoremap <Leader>p :GitFiles<CR>
-nnoremap <Leader>f :Files<CR>
-nnoremap <Leader>r :History<CR>
-nnoremap <Leader>b :Buffers<CR>
-nnoremap <Leader>o m':BTags<CR>
-nnoremap <Leader>O m':Tags<CR>
-nnoremap <Leader>l m':BLines<CR>
-nnoremap <Leader>L m':Lines<CR>
-nnoremap <Leader>gl m':BCommits<CR>
-nnoremap <Leader>gL m':Commits<CR>
-nnoremap <Leader>: :Commands<CR>
-
-nnoremap <Leader>/ m':Ag<CR>
-nnoremap <Leader>? m':Ag<Space>
-nnoremap <Leader>* m':Ag \b<C-R><C-W>\b<CR>
 
 " -- Git
 Plug 'tpope/vim-fugitive'
@@ -127,55 +75,16 @@ nmap <Leader>gg :Gstatus<CR><C-w>K
 nmap <Leader>gc :Gcommit -v<CR>
 nmap <Leader>gC :Gcommit --amend -v<CR>
 Plug 'airblade/vim-gitgutter'
-nmap <Leader>gs <Plug>GitGutterStageHunk
-nmap <Leader>gu <Plug>GitGutterUndoHunk
-nmap <Leader>gp <Plug>GitGutterPreviewHunk
+nmap <Leader>gs <Plug>(GitGutterStageHunk)
+nmap <Leader>gu <Plug>(GitGutterUndoHunk)
+nmap <Leader>gp <Plug>(GitGutterPreviewHunk)
 " Fix conflict with textobj-comment
-omap iC <Plug>GitGutterTextObjectInnerPending
-omap aC <Plug>GitGutterTextObjectOuterPending
-xmap iC <Plug>GitGutterTextObjectInnerVisual
-xmap aC <Plug>GitGutterTextObjectOuterVisual
-Plug 'junegunn/gv.vim'
+omap iC <Plug>(GitGutterTextObjectInnerPending)
+omap aC <Plug>(GitGutterTextObjectOuterPending)
+xmap iC <Plug>(GitGutterTextObjectInnerVisual)
+xmap aC <Plug>(GitGutterTextObjectOuterVisual)
 
-" -- Snippets
-Plug 'Shougo/neosnippet'
-Plug 'Shougo/neosnippet-snippets'
-imap <C-j>     <Plug>(neosnippet_expand_or_jump)
-smap <C-j>     <Plug>(neosnippet_expand_or_jump)
-xmap <C-j>     <Plug>(neosnippet_expand_target)
-" Plug 'SirVer/ultisnips' | Plug 'honza/vim-snippets'
-" let g:UltiSnipsExpandTrigger='<c-j>'
-
-" -- Sidebars, status bars
-Plug 'majutsushi/tagbar'
-let g:tagbar_sort = 0
-let g:tagbar_compact = 1
-nnoremap <Leader>T :TagbarOpenAutoClose<CR>
-Plug 'mbbill/undotree'
-let g:undotree_WindowLayout = 2
-
-set statusline=
-set statusline+=%#CursorColumn#
-set statusline+=%(\ %f%(\ %m%)%)
-set statusline+=%(\ (%{fugitive#head(6)})%)
-set statusline+=\ 
-set statusline+=%#StatusLine#
-set statusline+=%<
-set statusline+=%(\ %{tagbar#currenttag('%s',\ '',\ 'f')}\ %)
-set statusline+=%=
-set statusline+=\ %p%%
-set statusline+=\ %l:%c
-set statusline+=\ 
-
-" -- Autocomplete / lint
-Plug 'skywind3000/asyncrun.vim'
-command! -bang -nargs=* -complete=file Make AsyncRun<bang> -save=2 -post=checktime -program=make @ <args>
-nnoremap <Leader>m :Make<CR>
-nnoremap <Leader>k :AsyncStop<CR>
-augroup qf_toggle
-  au!
-  autocmd User AsyncRunStart call asyncrun#quickfix_toggle(12, 1)
-augroup END
+" -- LSP, Navigation & Autocomplete
 Plug 'w0rp/ale'
 let g:ale_c_lizard_options = '-ENS -EIgnoreAssert -T length=100'
 let g:ale_python_auto_pipenv = 1
@@ -183,66 +92,93 @@ let g:ale_linters = {
       \ 'cpp': ['clangtidy'],
       \ 'c': ['clangtidy']
       \ }
+let g:ale_cpp_clangtidy_checks = [
+      \ 'bugprone-*',
+      \ 'cppcoreguidelines*',
+      \ 'modernize-*',
+      \ 'openmp-*',
+      \ 'performance-*',
+      \ 'readability-*',
+      \ '-modernize-use-trailing-return-type'
+      \]
+let g:ale_c_build_dir_names = ['.', 'build', 'bin']
+let g:ale_cpp_build_dir_names = ['.', 'build', 'bin']
 
-Plug 'ludovicchabant/vim-gutentags'
-nnoremap <Leader>ug :GutentagsUpdate<CR>
+Plug 'cdelledonne/vim-cmake'
 
-Plug 'Valloric/YouCompleteMe', { 'do': './install.py --quiet --clang-completer --rust-completer'  }
-let g:ycm_python_binary_path = 'python'
-let g:ycm_add_preview_to_completeopt = 1
-let g:ycm_autoclose_preview_window_after_insertion = 1
-let g:ycm_filetype_blacklist = {
-      \ 'c': 1,
-      \ 'cpp': 1,
-      \ 'objc': 1,
-      \ 'objcpp': 1,
-      \}
+" Plug 'ludovicchabant/vim-gutentags'
+" nnoremap <Leader>ug :GutentagsUpdate<CR>
+" let g:gutentags_ctags_extra_args = ['--exclude=*.ccls-cache/*']
 
-Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
-let g:go_quickfix_height = 10
+Plug 'nvim-lua/popup.nvim'
+Plug 'nvim-lua/plenary.nvim'
+Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+set foldmethod=expr
+set foldexpr=nvim_treesitter#foldexpr()
 
-" Plug 'neoclide/coc.nvim', {'tag': '*', 'do': { -> coc#util#install()}}
-" let g:coc_user_config = {
-"       \  'languageserver': {
-"       \    'ccls': {
-"       \      'command': 'ccls',
-"       \      'filetypes': ['c', 'cpp', 'objc', 'objcpp'],
-"       \        'rootPatterns': ['.ccls', 'compile_commands.json', '.vim/', '.git/', '.hg/'],
-"       \        'initializationOptions': {
-"       \                'cacheDirectory': '/tmp/ccls'
-"       \        }
-"       \    }
-"       \  }
-"       \}
-" augroup coc_global
-"     " autocmd User CocNvimInit highlight! CocHighlightText cterm=bold gui=bold ctermfg=NONE ctermbg=NONE guifg=NONE guibg=NONE
-"     " autocmd User CocNvimInit highlight! link CocHighlightText StatusLine
-"     autocmd User CocNvimInit highlight! link CocHighlightText Search
-"     autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
-" augroup END
+Plug 'rafamadriz/friendly-snippets'
+Plug 'hrsh7th/vim-vsnip'
+"
+" Expand
+imap <expr> <C-j>   vsnip#expandable()  ? '<Plug>(vsnip-expand)'         : '<C-j>'
+smap <expr> <C-j>   vsnip#expandable()  ? '<Plug>(vsnip-expand)'         : '<C-j>'
 
-Plug 'roxma/nvim-yarp'
-Plug 'ncm2/ncm2'
-Plug 'ncm2/ncm2-bufword'
-Plug 'ncm2/ncm2-neosnippet'
-Plug 'ncm2/ncm2-path'
-Plug 'ncm2/ncm2-tagprefix'
+" Expand or jump
+imap <expr> <C-l>   vsnip#available(1)  ? '<Plug>(vsnip-expand-or-jump)' : '<C-l>'
+smap <expr> <C-l>   vsnip#available(1)  ? '<Plug>(vsnip-expand-or-jump)' : '<C-l>'
 
-Plug 'autozimu/LanguageClient-neovim', {
-    \ 'branch': 'next',
-    \ 'do': 'bash install.sh',
-    \ }
-let g:LanguageClient_serverCommands = {
-      \ 'c':    ['ccls', '--log-file=/tmp/ccls.log'],
-      \ 'cpp':  ['ccls', '--log-file=/tmp/ccls.log'],
-      \ 'objc': ['ccls', '--log-file=/tmp/ccls.log'],
-      \ }
-augroup my_ncm2
-  au!
-  au User Ncm2PopupOpen set completeopt=noinsert,menuone,noselect
-  au User Ncm2PopupClose set completeopt=menuone
-augroup END
-let g:gutentags_ctags_extra_args = ['--exclude=*.ccls-cache/*']
+" Jump forward or backward
+imap <expr> <Tab>   vsnip#jumpable(1)   ? '<Plug>(vsnip-jump-next)'      : '<Tab>'
+smap <expr> <Tab>   vsnip#jumpable(1)   ? '<Plug>(vsnip-jump-next)'      : '<Tab>'
+imap <expr> <S-Tab> vsnip#jumpable(-1)  ? '<Plug>(vsnip-jump-prev)'      : '<S-Tab>'
+smap <expr> <S-Tab> vsnip#jumpable(-1)  ? '<Plug>(vsnip-jump-prev)'      : '<S-Tab>'
+
+" Select or cut text to use as $TM_SELECTED_TEXT in the next snippet.
+" See https://github.com/hrsh7th/vim-vsnip/pull/50
+xmap        s   <Plug>(vsnip-select-text)
+nmap        S   <Plug>(vsnip-cut-text)
+xmap        S   <Plug>(vsnip-cut-text)
+
+Plug 'neovim/nvim-lspconfig'
+Plug 'folke/lsp-colors.nvim'
+Plug 'kabouzeid/nvim-lspinstall'
+
+nnoremap <leader>A <cmd>ClangdSwitchSourceHeader<cr>
+nnoremap <leader>K <cmd>lua vim.lsp.buf.hover()<cr>
+nnoremap <leader>cr <cmd>lua vim.lsp.buf.rename()<CR>
+nnoremap <leader>cc <cmd>lua vim.lsp.buf.code_action()<CR>
+nnoremap <leader>cf <cmd>lua vim.lsp.buf.formatting()<CR>
+nnoremap <leader>m <cmd>make<CR>
+nnoremap [d <cmd>lua vim.lsp.diagnostic.goto_prev()<CR>
+nnoremap ]d <cmd>lua vim.lsp.diagnostic.goto_next()<CR>
+inoremap <C-k> <cmd>lua vim.lsp.buf.signature_help()<CR>
+
+Plug 'nvim-telescope/telescope.nvim'
+nnoremap <leader>p <cmd>Telescope find_files<cr>
+nnoremap <leader>f <cmd>Telescope file_browser<cr>
+nnoremap <leader>r <cmd>Telescope oldfiles<cr>
+nnoremap <leader>q <cmd>Telescope quickfix<cr>
+nnoremap <leader>" <cmd>Telescope registers<cr>
+nnoremap <leader>/ <cmd>Telescope live_grep<cr>
+nnoremap <leader>* <cmd>Telescope grep_string<cr>
+nnoremap <leader>b <cmd>Telescope buffers<cr>
+nnoremap <leader>h <cmd>Telescope help_tags<cr>
+nnoremap <leader>o <cmd>Telescope lsp_document_symbols<cr>
+nnoremap <leader>O <cmd>Telescope lsp_dynamic_workspace_symbols<cr>
+nnoremap <leader>e <cmd>Telescope lsp_document_diagnostics<cr>
+nnoremap <leader>E <cmd>Telescope lsp_workspace_diagnostics<cr>
+nnoremap <leader>gd <cmd>Telescope lsp_definitions<cr>
+nnoremap <leader>gi <cmd>Telescope lsp_implementations<cr>
+nnoremap <leader>gr <cmd>Telescope lsp_references<cr>
+nnoremap <leader>ga <cmd>Telescope lsp_code_actions<cr>
+
+Plug 'hrsh7th/nvim-compe'
+set completeopt=menuone,noselect
+inoremap <silent><expr> <C-Space> compe#complete()
+inoremap <silent><expr> <CR>      compe#confirm('<CR>')
+inoremap <silent><expr> <C-e>     compe#close('<C-e>')
+inoremap <silent><expr> <C-f>     compe#scroll({ 'delta': +4 })
+inoremap <silent><expr> <C-d>     compe#scroll({ 'delta': -4 })
 
 " -- Highlighting
 Plug 'sheerun/vim-polyglot'
@@ -252,8 +188,9 @@ Plug 'ekalinin/Dockerfile.vim'  " polyglot version does not work: https://github
 Plug 'iCyMind/NeoSolarized'
 Plug 'arcticicestudio/nord-vim'
 Plug 'romainl/Apprentice'
-" Plug 'tomasr/molokai'
-Plug 'shime/molokai'
+Plug 'tomasr/molokai'
+" Plug 'shime/molokai'
+Plug 'tanvirtin/monokai.nvim'
 
 " -- Debugger
 Plug 'sakhnik/nvim-gdb', { 'do': './install.sh' }
@@ -261,23 +198,109 @@ Plug 'sakhnik/nvim-gdb', { 'do': './install.sh' }
 " Initialize plugin system
 call plug#end()
 
+lua << EOF
+require'nvim-treesitter.configs'.setup {
+  ensure_installed = "maintained",
+  highlight = {
+    enable = true,
+  },
+  indent = {
+    enable = true,
+  },
+  incremental_selection = {
+    enable = true,
+    keymaps = {
+      init_selection = "gnn",
+      node_incremental = "grn",
+      scope_incremental = "grc",
+      node_decremental = "grm",
+    },
+  },
+}
+
+local capabilities = vim.lsp.protocol.make_client_capabilities()
+capabilities.textDocument.completion.completionItem.snippetSupport = true
+capabilities.textDocument.completion.completionItem.resolveSupport = {
+  properties = {
+    'documentation',
+    'detail',
+    'additionalTextEdits',
+  }
+}
+
+local function setup_servers()
+  require'lspinstall'.setup()
+  local servers = require'lspinstall'.installed_servers()
+  for _, server in pairs(servers) do
+    if server == "clangd" then
+      require'lspconfig'[server].setup{
+        capabilities = capabilities,
+        cmd = { "clangd", "--background-index", "--completion-style=detailed" }
+      }
+    elseif server == "kotlin" then
+      require'lspconfig'[server].setup{
+          settings = { kotlin = { compiler = { jvm = { target = "1.8" } } } }
+      }
+    else
+      require'lspconfig'[server].setup{
+        capabilities = capabilities,
+      }
+    end
+  end
+end
+
+setup_servers()
+-- Automatically reload after `:LspInstall <server>` so we don't have to restart neovim
+require'lspinstall'.post_install_hook = function ()
+  setup_servers() -- reload installed servers
+  vim.cmd("bufdo e") -- this triggers the FileType autocmd that starts the server
+end
+
+require'compe'.setup {
+  enabled = true;
+  autocomplete = true;
+  debug = false;
+  min_length = 1;
+  preselect = 'enable';
+  throttle_time = 80;
+  source_timeout = 200;
+  incomplete_delay = 400;
+  max_abbr_width = 100;
+  max_kind_width = 100;
+  max_menu_width = 100;
+  documentation = true;
+  source = {
+    path = true;
+    buffer = true;
+    calc = true;
+    nvim_lsp = true;
+    nvim_lua = true;
+    vsnip = true;
+    ultisnips = false;
+  };
+}
+
+require'lsp-colors'.setup()
+EOF
+
 " Colorscheme
-if $TERM ==# 'stterm-256color' || $TERM ==# 'xterm-kitty'
+if $TERM ==# 'stterm-256color' || $TERM ==# 'xterm-kitty' || $TERM ==# 'screen-256color'
   set termguicolors
 endif
 set background=dark
-colorscheme molokai
+colorscheme monokai
 
 " Misc
+set autowrite
 set exrc
-set cinoptions=(0
-set wildmode=longest:full,full
-set mouse=a
 set hidden
+set mouse=a
 set noshowmode
 set nowrap
+set title
 set undofile
 set updatetime=100
+set wildmode=longest:full,full
 
 nnoremap <Leader>c :echo systemlist('date')[0]<CR>
 
@@ -405,6 +428,7 @@ nnoremap <Leader>tt :tabnew +terminal<CR>
 nnoremap <Leader>gt :vnew term://tig --first-parent<CR>
 augroup my_terminal
   au!
+  autocmd TermOpen * echom 'Terminal id: ' b:terminal_job_id
   autocmd BufEnter,TermOpen term://* startinsert
   autocmd BufLeave term://* stopinsert
 augroup END
@@ -418,46 +442,14 @@ command! -nargs=1 VimwikiDiaryDay execute "edit "
 " Abbrevs
 iabbrev ymd <C-r>=strftime('%Y%m%d')<CR>
 
-function! s:init_lsp() abort
-  " " Use <c-space> for trigger completion.
-  " inoremap <buffer> <silent><expr> <c-space> coc#refresh()
-
-  " " Remap keys for gotos
-  " nmap <buffer> <silent> <localleader>gd <Plug>(coc-definition)
-  " nmap <buffer> <silent> <localleader><localleader> <Plug>(coc-definition)
-  " nmap <buffer> <silent> <localleader>gD <Plug>(coc-type-definition)
-  " nmap <buffer> <silent> <localleader>gi <Plug>(coc-implementation)
-  " nmap <buffer> <silent> <localleader>gr <Plug>(coc-references)
-
-  " " Remap for rename current word
-  " nmap <buffer> <localleader>r <Plug>(coc-rename)
-
-  " " Use k for show documentation in preview window
-  " nnoremap <buffer> <silent> <localleader>k :call CocAction('doHover')<CR>
-
-  call ncm2#enable_for_buffer()
-  nnoremap <buffer> <silent> <LocalLeader>C :call LanguageClient_contextMenu()<CR>
-  nnoremap <buffer> <silent> <LocalLeader>k :call LanguageClient#textDocument_hover()<CR>
-  nnoremap <buffer> <silent> <LocalLeader><LocalLeader> :call LanguageClient#textDocument_definition()<CR>
-  nnoremap <buffer> <silent> <LocalLeader>gd :call LanguageClient#textDocument_definition()<CR>
-  nnoremap <buffer> <silent> <LocalLeader>gr :call LanguageClient#textDocument_references()<CR>
-  nnoremap <buffer> <silent> <LocalLeader>r :call LanguageClient#textDocument_rename()<CR>
-
-  " For neosnippet conceal markers.
-  if has('conceal')
-    setlocal conceallevel=2 concealcursor=niv
-  endif
-endfunction
-
 " Default
 nmap <LocalLeader><LocalLeader> gd
 
 " Type-specific
 augroup type_specific_conf
   au!
-  au FileType c,cpp setlocal colorcolumn=80 list spell
+  au FileType c,cpp setlocal colorcolumn=120 list spell
   au FileType c,cpp setlocal errorformat^=%I%f:%l:%c:\ note:%m,%I%f:%l:\ note:%m,%f:%l:%c:\ %t%*[^:]:%m,%f:%l:\ %t%*[^:]:%m
-  au FileType c,cpp nnoremap <buffer> <LocalLeader>c :AsyncRun -auto=make clang-tidy -header-filter='^%:h/.*' %<CR>
   au FileType c,cpp nnoremap <buffer> <LocalLeader>l :tabnew<CR>
         \:silent 0r ! lizard -ENS -EIgnoreAssert -T length=100 #<CR>
         \:silent setl nomodified nomodifiable<CR>
@@ -465,9 +457,6 @@ augroup type_specific_conf
   au FileType c,cpp iabbrev <buffer> anoo __attribute__((optimize("O0"))) // FIXME
   au FileType c,cpp iabbrev <buffer> gnoo #pragma GCC optimize("O0") // FIXME
   au FileType c,cpp iabbrev <buffer> cnoo #pragma clang optimize off // FIXME
-
-  au FileType rust,python nnoremap <buffer> <LocalLeader><LocalLeader> :YcmCompleter GoTo<CR>
-  au FileType c,cpp call s:init_lsp()
 
   au FileType vimwiki nnoremap <buffer> <LocalLeader>p :VimwikiDiaryPrevDay<CR>
   au FileType vimwiki nnoremap <buffer> <LocalLeader>n :VimwikiDiaryNextDay<CR>
@@ -487,3 +476,5 @@ augroup type_specific_conf
 augroup END
 
 set secure
+
+lua require'packages'
