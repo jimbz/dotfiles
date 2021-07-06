@@ -1,294 +1,15 @@
-" Auto-install vim-plug
-if empty(glob('~/.local/share/nvim/site/autoload/plug.vim'))
-  silent !curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs
-    \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-  autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
-endif
-
-" Specify a directory for plugins (for Neovim: ~/.local/share/nvim/plugged)
-call plug#begin('~/.local/share/nvim/plugged')
-
 " Leader
 let g:mapleader=' '
 let g:maplocalleader=','
 
-" -- Misc system
-Plug 'jpalardy/vim-slime'
-let g:slime_target = 'neovim'
+lua require'packages'
 
-Plug 'tmux-plugins/vim-tmux-focus-events'
-Plug 'tpope/vim-eunuch'
-Plug 'tpope/vim-obsession'
-Plug 'tpope/vim-unimpaired'
-Plug 'tpope/vim-repeat'
-Plug 'tpope/vim-rsi'
-Plug 'tpope/vim-sensible'
-Plug 'tpope/vim-vinegar'
-
-" -- Misc editing
-Plug 'AndrewRadev/linediff.vim'
-Plug 'jceb/vim-editqf'
-Plug 'machakann/vim-highlightedyank'
-Plug 'tommcdo/vim-exchange'
-Plug 'tommcdo/vim-lion'
-let g:lion_squeeze_spaces = 1
-Plug 'tpope/vim-commentary'
-nmap <Leader>; gc
-nmap <Leader>;; gcc
-nmap <Leader>;y yyPgccj
-nmap <Leader>;Y yypgcck
-vmap <Leader>; gc
-vmap <Leader>;Y yPgvgc'[
-vmap <Leader>;y yP`[v`]gc']j
-Plug 'tpope/vim-abolish'
-Plug 'tpope/vim-sleuth'
-Plug 'tpope/vim-surround'
-
-" -- Web browser
-Plug 'shumphrey/fugitive-gitlab.vim'
-let g:fugitive_gitlab_domains = ['https://gl.phiar.net']
-Plug 'tpope/vim-rhubarb'
-Plug 'szw/vim-g'
-noremap <Leader>K :Googlef<CR>
-
-" -- Textobjects
-Plug 'fvictorio/vim-textobj-backticks'
-Plug 'glts/vim-textobj-comment'
-Plug 'kana/vim-textobj-indent'
-Plug 'kana/vim-textobj-user'
-Plug 'PeterRincker/vim-argumentative'
-
-" -- Buffers
-Plug 'kana/vim-altr'
-nmap <Leader>a <Plug>(altr-forward)
-"nmap <Leader>A <Plug>(altr-back)
-Plug 'qpkorr/vim-bufkill'
-let g:BufKillCreateMappings = 0
-
-" -- Productivity
-Plug 'vimwiki/vimwiki'
-let g:vimwiki_list = [{'syntax': 'markdown', 'ext': '.md'}]
-
-" -- Git
-Plug 'tpope/vim-fugitive'
-nmap <Leader>gg :Gstatus<CR><C-w>K
-nmap <Leader>gc :Gcommit -v<CR>
-nmap <Leader>gC :Gcommit --amend -v<CR>
-Plug 'airblade/vim-gitgutter'
-nmap <Leader>gs <Plug>(GitGutterStageHunk)
-nmap <Leader>gu <Plug>(GitGutterUndoHunk)
-nmap <Leader>gp <Plug>(GitGutterPreviewHunk)
-" Fix conflict with textobj-comment
-omap iC <Plug>(GitGutterTextObjectInnerPending)
-omap aC <Plug>(GitGutterTextObjectOuterPending)
-xmap iC <Plug>(GitGutterTextObjectInnerVisual)
-xmap aC <Plug>(GitGutterTextObjectOuterVisual)
-
-" -- LSP, Navigation & Autocomplete
-Plug 'w0rp/ale'
-let g:ale_c_lizard_options = '-ENS -EIgnoreAssert -T length=100'
-let g:ale_python_auto_pipenv = 1
-let g:ale_linters = {
-      \ 'cpp': ['clangtidy'],
-      \ 'c': ['clangtidy']
-      \ }
-let g:ale_cpp_clangtidy_checks = [
-      \ 'bugprone-*',
-      \ 'cppcoreguidelines*',
-      \ 'modernize-*',
-      \ 'openmp-*',
-      \ 'performance-*',
-      \ 'readability-*',
-      \ '-modernize-use-trailing-return-type'
-      \]
-let g:ale_c_build_dir_names = ['.', 'build', 'bin']
-let g:ale_cpp_build_dir_names = ['.', 'build', 'bin']
-
-Plug 'cdelledonne/vim-cmake'
-
-" Plug 'ludovicchabant/vim-gutentags'
-" nnoremap <Leader>ug :GutentagsUpdate<CR>
-" let g:gutentags_ctags_extra_args = ['--exclude=*.ccls-cache/*']
-
-Plug 'nvim-lua/popup.nvim'
-Plug 'nvim-lua/plenary.nvim'
-Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
-set foldmethod=expr
-set foldexpr=nvim_treesitter#foldexpr()
-
-Plug 'rafamadriz/friendly-snippets'
-Plug 'hrsh7th/vim-vsnip'
-"
-" Expand
-imap <expr> <C-j>   vsnip#expandable()  ? '<Plug>(vsnip-expand)'         : '<C-j>'
-smap <expr> <C-j>   vsnip#expandable()  ? '<Plug>(vsnip-expand)'         : '<C-j>'
-
-" Expand or jump
-imap <expr> <C-l>   vsnip#available(1)  ? '<Plug>(vsnip-expand-or-jump)' : '<C-l>'
-smap <expr> <C-l>   vsnip#available(1)  ? '<Plug>(vsnip-expand-or-jump)' : '<C-l>'
-
-" Jump forward or backward
-imap <expr> <Tab>   vsnip#jumpable(1)   ? '<Plug>(vsnip-jump-next)'      : '<Tab>'
-smap <expr> <Tab>   vsnip#jumpable(1)   ? '<Plug>(vsnip-jump-next)'      : '<Tab>'
-imap <expr> <S-Tab> vsnip#jumpable(-1)  ? '<Plug>(vsnip-jump-prev)'      : '<S-Tab>'
-smap <expr> <S-Tab> vsnip#jumpable(-1)  ? '<Plug>(vsnip-jump-prev)'      : '<S-Tab>'
-
-" Select or cut text to use as $TM_SELECTED_TEXT in the next snippet.
-" See https://github.com/hrsh7th/vim-vsnip/pull/50
-xmap        s   <Plug>(vsnip-select-text)
-nmap        S   <Plug>(vsnip-cut-text)
-xmap        S   <Plug>(vsnip-cut-text)
-
-Plug 'neovim/nvim-lspconfig'
-Plug 'folke/lsp-colors.nvim'
-Plug 'kabouzeid/nvim-lspinstall'
-
-nnoremap <leader>A <cmd>ClangdSwitchSourceHeader<cr>
-nnoremap <leader>K <cmd>lua vim.lsp.buf.hover()<cr>
-nnoremap <leader>cr <cmd>lua vim.lsp.buf.rename()<CR>
-nnoremap <leader>cc <cmd>lua vim.lsp.buf.code_action()<CR>
-nnoremap <leader>cf <cmd>lua vim.lsp.buf.formatting()<CR>
 nnoremap <leader>m <cmd>make<CR>
-nnoremap [d <cmd>lua vim.lsp.diagnostic.goto_prev()<CR>
-nnoremap ]d <cmd>lua vim.lsp.diagnostic.goto_next()<CR>
-inoremap <C-k> <cmd>lua vim.lsp.buf.signature_help()<CR>
 
-Plug 'nvim-telescope/telescope.nvim'
-nnoremap <leader>p <cmd>Telescope find_files<cr>
-nnoremap <leader>f <cmd>Telescope file_browser<cr>
-nnoremap <leader>r <cmd>Telescope oldfiles<cr>
-nnoremap <leader>q <cmd>Telescope quickfix<cr>
-nnoremap <leader>" <cmd>Telescope registers<cr>
-nnoremap <leader>/ <cmd>Telescope live_grep<cr>
-nnoremap <leader>* <cmd>Telescope grep_string<cr>
-nnoremap <leader>b <cmd>Telescope buffers<cr>
-nnoremap <leader>h <cmd>Telescope help_tags<cr>
-nnoremap <leader>o <cmd>Telescope lsp_document_symbols<cr>
-nnoremap <leader>O <cmd>Telescope lsp_dynamic_workspace_symbols<cr>
-nnoremap <leader>e <cmd>Telescope lsp_document_diagnostics<cr>
-nnoremap <leader>E <cmd>Telescope lsp_workspace_diagnostics<cr>
-nnoremap <leader>gd <cmd>Telescope lsp_definitions<cr>
-nnoremap <leader>gi <cmd>Telescope lsp_implementations<cr>
-nnoremap <leader>gr <cmd>Telescope lsp_references<cr>
-nnoremap <leader>ga <cmd>Telescope lsp_code_actions<cr>
-
-Plug 'hrsh7th/nvim-compe'
-set completeopt=menuone,noselect
-inoremap <silent><expr> <C-Space> compe#complete()
-inoremap <silent><expr> <CR>      compe#confirm('<CR>')
-inoremap <silent><expr> <C-e>     compe#close('<C-e>')
-inoremap <silent><expr> <C-f>     compe#scroll({ 'delta': +4 })
-inoremap <silent><expr> <C-d>     compe#scroll({ 'delta': -4 })
-
-" -- Highlighting
-Plug 'sheerun/vim-polyglot'
-Plug 'ekalinin/Dockerfile.vim'  " polyglot version does not work: https://github.com/sheerun/vim-polyglot/issues/361
-
-" -- Colorschemes
-Plug 'iCyMind/NeoSolarized'
-Plug 'arcticicestudio/nord-vim'
-Plug 'romainl/Apprentice'
-Plug 'tomasr/molokai'
-" Plug 'shime/molokai'
-Plug 'tanvirtin/monokai.nvim'
-
-" -- Debugger
-Plug 'sakhnik/nvim-gdb', { 'do': './install.sh' }
-
-" Initialize plugin system
-call plug#end()
-
-lua << EOF
-require'nvim-treesitter.configs'.setup {
-  ensure_installed = "maintained",
-  highlight = {
-    enable = true,
-  },
-  indent = {
-    enable = true,
-  },
-  incremental_selection = {
-    enable = true,
-    keymaps = {
-      init_selection = "gnn",
-      node_incremental = "grn",
-      scope_incremental = "grc",
-      node_decremental = "grm",
-    },
-  },
-}
-
-local capabilities = vim.lsp.protocol.make_client_capabilities()
-capabilities.textDocument.completion.completionItem.snippetSupport = true
-capabilities.textDocument.completion.completionItem.resolveSupport = {
-  properties = {
-    'documentation',
-    'detail',
-    'additionalTextEdits',
-  }
-}
-
-local function setup_servers()
-  require'lspinstall'.setup()
-  local servers = require'lspinstall'.installed_servers()
-  for _, server in pairs(servers) do
-    if server == "clangd" then
-      require'lspconfig'[server].setup{
-        capabilities = capabilities,
-        cmd = { "clangd", "--background-index", "--completion-style=detailed" }
-      }
-    elseif server == "kotlin" then
-      require'lspconfig'[server].setup{
-          settings = { kotlin = { compiler = { jvm = { target = "1.8" } } } }
-      }
-    else
-      require'lspconfig'[server].setup{
-        capabilities = capabilities,
-      }
-    end
-  end
-end
-
-setup_servers()
--- Automatically reload after `:LspInstall <server>` so we don't have to restart neovim
-require'lspinstall'.post_install_hook = function ()
-  setup_servers() -- reload installed servers
-  vim.cmd("bufdo e") -- this triggers the FileType autocmd that starts the server
-end
-
-require'compe'.setup {
-  enabled = true;
-  autocomplete = true;
-  debug = false;
-  min_length = 1;
-  preselect = 'enable';
-  throttle_time = 80;
-  source_timeout = 200;
-  incomplete_delay = 400;
-  max_abbr_width = 100;
-  max_kind_width = 100;
-  max_menu_width = 100;
-  documentation = true;
-  source = {
-    path = true;
-    buffer = true;
-    calc = true;
-    nvim_lsp = true;
-    nvim_lua = true;
-    vsnip = true;
-    ultisnips = false;
-  };
-}
-
-require'lsp-colors'.setup()
-EOF
-
-" Colorscheme
 if $TERM ==# 'stterm-256color' || $TERM ==# 'xterm-kitty' || $TERM ==# 'screen-256color'
   set termguicolors
 endif
 set background=dark
-colorscheme monokai
 
 " Misc
 set autowrite
@@ -320,7 +41,6 @@ augroup vimStartup
         \ if line("'\"") >= 1 && line("'\"") <= line("$") |
         \   exe "normal! g`\"" |
         \ endif
-
 augroup END
 
 " Convenient command to see the difference between the current buffer and the
@@ -433,12 +153,6 @@ augroup my_terminal
   autocmd BufLeave term://* stopinsert
 augroup END
 
-" Commands
-command! -nargs=1 VimwikiDiaryDay execute "edit "
-      \. "~/vimwiki/diary/"
-      \. systemlist('date --date="<args>" +%Y-%m-%d')[0]
-      \. ".md"
-
 " Abbrevs
 iabbrev ymd <C-r>=strftime('%Y%m%d')<CR>
 
@@ -476,5 +190,3 @@ augroup type_specific_conf
 augroup END
 
 set secure
-
-lua require'packages'
