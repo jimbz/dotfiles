@@ -18,18 +18,22 @@ return require'packer'.startup({
       config = function() vim.cmd[[
           augroup packer_compile
           au!
-          autocmd BufWritePost packages.lua PackerCompile
+          autocmd BufWritePost packages.lua source <afile> | PackerCompile
           augroup END
       ]] end
     }
 
     -- {{{ Misc tpope plugins
+    use 'tpope/vim-abolish'  -- Smart case handling for search and replace
+    use 'tpope/vim-dispatch'
     use 'tpope/vim-eunuch'
     use 'tpope/vim-obsession'
-    use 'tpope/vim-unimpaired'
     use 'tpope/vim-repeat'
+    use 'tpope/vim-surround'
+    use 'tpope/vim-unimpaired'
     use 'tpope/vim-rsi'
     -- use 'tpope/vim-sensible'  -- Included in polyglot
+    -- use 'tpope/vim-sleuth'  -- Included in polyglot
     use 'tpope/vim-vinegar'
 
     use {
@@ -44,15 +48,9 @@ return require'packer'.startup({
         vmap <Leader>;y yP`[v`]gc']j
       ]] end
     }
-
-    use 'tpope/vim-abolish'  -- Smart case handling for search and replace
-    -- use 'tpope/vim-sleuth'  -- Included in polyglot
-    use 'tpope/vim-surround'
     -- }}}
 
     -- {{{ Misc editing
-    use 'AndrewRadev/linediff.vim'
-    use 'jceb/vim-editqf'
     use 'machakann/vim-highlightedyank'
     use 'tommcdo/vim-exchange'
     use {
@@ -66,9 +64,9 @@ return require'packer'.startup({
     -- {{{ Git
     use { 'tpope/vim-fugitive',
       config = function() vim.cmd[[
-        nmap <Leader>gg :Gstatus<CR><C-w>K
-        nmap <Leader>gc :Gcommit -v<CR>
-        nmap <Leader>gC :Gcommit --amend -v<CR>
+        nmap <Leader>gg :Git<CR><C-w>H
+        nmap <Leader>gc :Git commit -v<CR>
+        nmap <Leader>gC :Git commit --amend -v<CR>
       ]] end
     }
 
@@ -106,15 +104,6 @@ return require'packer'.startup({
       opt = true,
       config = function() require'lsp-colors'.setup() end
     }
-
-    use {
-      'tjdevries/gruvbuddy.nvim',
-      requires = 'tjdevries/colorbuddy.vim',
-      config = function()
-        -- require('colorbuddy').colorscheme('gruvbuddy')
-      end
-    }
-
     use {
       'bluz71/vim-moonfly-colors',
       config = function()
@@ -153,9 +142,9 @@ return require'packer'.startup({
             highlight = {
               enable = true,
             },
-            indent = {
-              enable = true,
-            },
+            -- indent = {
+            --   enable = true,
+            -- },
             incremental_selection = {
               enable = true,
               keymaps = {
@@ -182,6 +171,7 @@ return require'packer'.startup({
           nnoremap <leader>cr <cmd>lua vim.lsp.buf.rename()<CR>
           nnoremap <leader>cc <cmd>lua vim.lsp.buf.code_action()<CR>
           nnoremap <leader>cf <cmd>lua vim.lsp.buf.formatting()<CR>
+          nnoremap <leader>e <cmd>lua vim.lsp.diagnostic.set_loclist()<cr>
           nnoremap [d <cmd>lua vim.lsp.diagnostic.goto_prev()<CR>
           nnoremap ]d <cmd>lua vim.lsp.diagnostic.goto_next()<CR>
           inoremap <C-k> <cmd>lua vim.lsp.buf.signature_help()<CR>
@@ -190,13 +180,6 @@ return require'packer'.startup({
         local lspconfig = require'lspconfig'
         local capabilities = vim.lsp.protocol.make_client_capabilities()
         capabilities.textDocument.completion.completionItem.snippetSupport = true
-        capabilities.textDocument.completion.completionItem.resolveSupport = {
-          properties = {
-            'documentation',
-            'detail',
-            'additionalTextEdits',
-          }
-        }
 
         lspconfig.util.default_config = vim.tbl_extend(
           "force",
@@ -212,20 +195,27 @@ return require'packer'.startup({
       'kabouzeid/nvim-lspinstall',
       requires = 'nvim-lspconfig',
       config = function()
+        local capabilities = vim.lsp.protocol.make_client_capabilities()
+        capabilities.textDocument.completion.completionItem.snippetSupport = true
+
         local function setup_servers()
           require'lspinstall'.setup()
           local servers = require'lspinstall'.installed_servers()
           for _, server in pairs(servers) do
             if server == "cpp" then
               require'lspconfig'[server].setup{
-                cmd = { "clangd", "--background-index", "--completion-style=detailed", "--clang-tidy" }
+                cmd = { "clangd", "--background-index", "--completion-style=detailed", "--clang-tidy", "--cross-file-rename" };
+                capabilities = capabilities;
               }
             elseif server == "kotlin" then
               require'lspconfig'[server].setup{
-                settings = { kotlin = { compiler = { jvm = { target = "1.8" } } } }
+                capabilities = capabilities;
+                settings = { kotlin = { compiler = { jvm = { target = "1.8" } } } };
               }
             else
-              require'lspconfig'[server].setup{}
+              require'lspconfig'[server].setup{
+                capabilities = capabilities;
+              }
             end
           end
         end
@@ -240,16 +230,16 @@ return require'packer'.startup({
       end
     }
 
+    use {
+      "ray-x/lsp_signature.nvim",
+      config = function() require "lsp_signature".setup() end
+    }
+
     -- }}}
 
     -- {{{ Snippets
     use {
       'rafamadriz/friendly-snippets',
-      depends = 'vim-vsnip'
-    }
-
-    use {
-      'hrsh7th/vim-vsnip-integ',
       depends = 'vim-vsnip'
     }
 
@@ -272,9 +262,9 @@ return require'packer'.startup({
 
         " Select or cut text to use as $TM_SELECTED_TEXT in the next snippet.
         " See https://github.com/hrsh7th/vim-vsnip/pull/50
-        xmap        s   <Plug>(vsnip-select-text)
-        nmap        S   <Plug>(vsnip-cut-text)
-        xmap        S   <Plug>(vsnip-cut-text)
+        "xmap        s   <Plug>(vsnip-select-text)
+        "nmap        S   <Plug>(vsnip-cut-text)
+        "xmap        S   <Plug>(vsnip-cut-text)
       ]] end
   }
   -- }}}
@@ -295,7 +285,6 @@ return require'packer'.startup({
       nnoremap <leader>h <cmd>Telescope help_tags<cr>
       nnoremap <leader>o <cmd>Telescope lsp_document_symbols<cr>
       nnoremap <leader>O <cmd>Telescope lsp_dynamic_workspace_symbols<cr>
-      nnoremap <leader>e <cmd>Telescope lsp_document_diagnostics<cr>
       nnoremap <leader>E <cmd>Telescope lsp_workspace_diagnostics<cr>
       nnoremap <leader>gd <cmd>Telescope lsp_definitions<cr>
       nnoremap <leader>gi <cmd>Telescope lsp_implementations<cr>
@@ -308,11 +297,13 @@ return require'packer'.startup({
   -- {{{ Autocompletion
   use {
     'hrsh7th/nvim-compe',
+    depends = 'vim-vsnip',
     config = function()
       vim.cmd[[
         set completeopt=menuone,noselect
         inoremap <silent><expr> <C-Space> compe#complete()
         inoremap <silent><expr> <CR>      compe#confirm('<CR>')
+        inoremap <silent><expr> <C-y>     compe#confirm('<C-y>')
         inoremap <silent><expr> <C-e>     compe#close('<C-e>')
         inoremap <silent><expr> <C-f>     compe#scroll({ 'delta': +4 })
         inoremap <silent><expr> <C-d>     compe#scroll({ 'delta': -4 })
@@ -339,6 +330,7 @@ return require'packer'.startup({
           nvim_lua = true;
           vsnip = true;
           ultisnips = false;
+          omni = false;
         };
       }
     end

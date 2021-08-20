@@ -20,7 +20,6 @@ set noshowmode
 set nowrap
 set title
 set undofile
-set updatetime=100
 set wildmode=longest:full,full
 
 nnoremap <Leader>c :echo systemlist('date')[0]<CR>
@@ -162,7 +161,8 @@ nmap <LocalLeader><LocalLeader> gd
 " Type-specific
 augroup type_specific_conf
   au!
-  au FileType c,cpp setlocal colorcolumn=120 list spell
+  au FileType c,cpp setlocal colorcolumn=100 list spell
+  au FileType c,cpp setlocal iskeyword+=:
   au FileType c,cpp setlocal errorformat^=%I%f:%l:%c:\ note:%m,%I%f:%l:\ note:%m,%f:%l:%c:\ %t%*[^:]:%m,%f:%l:\ %t%*[^:]:%m
   au FileType c,cpp nnoremap <buffer> <LocalLeader>l :tabnew<CR>
         \:silent 0r ! lizard -ENS -EIgnoreAssert -T length=100 #<CR>
