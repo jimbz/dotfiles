@@ -1,14 +1,13 @@
 " Leader
 let g:mapleader=' '
 let g:maplocalleader=','
+let g:polyglot_disabled = ['radiance']
 
 lua require'packages'
 
 nnoremap <leader>m <cmd>make<CR>
 
-if $TERM ==# 'stterm-256color' || $TERM ==# 'xterm-kitty' || $TERM ==# 'screen-256color'
-  set termguicolors
-endif
+set termguicolors
 set background=dark
 
 " Misc
@@ -130,15 +129,6 @@ nnoremap <A-Home> gT
 nnoremap <Leader>ts :tab split<CR>
 nnoremap <Leader>tn :tab new<CR>
 nnoremap <Leader>tc :tabclose<CR>
-
-augroup my_quickfix
-  au!
-  " This trigger takes advantage of the fact that the quickfix window can be
-  " easily distinguished by its file-type, qf. The wincmd J command is
-  " equivalent to the Ctrl+W, Shift+J shortcut telling Vim to move a window to
-  " the very bottom (see :help :wincmd and :help ^WJ).
-  au FileType qf wincmd J
-augroup END
 
 " Terminal
 nnoremap <Leader>th :below 10new +terminal<CR>

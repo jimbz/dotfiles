@@ -27,7 +27,7 @@ export PATH="$HOME/Library/Android/sdk/platform-tools:$PATH"
 
 alias bbat="bat --theme=\$(defaults read -globalDomain AppleInterfaceStyle &> /dev/null && echo default || echo GitHub)"
 export BYOBU_PREFIX=/usr/local
-export JAVA_HOME=/usr/local/opt/java
+export JAVA_HOME=/usr/local/opt/java11
 
 [[ -n $VIRTUAL_ENV && -e "${VIRTUAL_ENV}/bin/activate" ]] && source "${VIRTUAL_ENV}/bin/activate"
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh

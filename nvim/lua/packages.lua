@@ -86,7 +86,7 @@ return require'packer'.startup({
 
     use {
       'shumphrey/fugitive-gitlab.vim',
-      depends = 'vim-fugitive',
+      requires = 'vim-fugitive',
       setup = function() vim.cmd[[
         let g:fugitive_gitlab_domains = ['https://gl.phiar.net']
       ]] end
@@ -94,7 +94,7 @@ return require'packer'.startup({
 
     use {
       'tpope/vim-rhubarb',
-      depends = 'vim-fugitive'
+      requires = 'vim-fugitive'
     }
     -- }}}
 
@@ -158,7 +158,14 @@ return require'packer'.startup({
         end
     }
 
-    use 'sheerun/vim-polyglot'
+    use {
+      'sheerun/vim-polyglot',
+      setup = function()
+        vim.cmd[[
+          let g:polyglot_disabled = ['radiance']
+        ]]
+      end
+    }
     -- }}}
 
     -- {{{ LSP
@@ -192,41 +199,27 @@ return require'packer'.startup({
     }
 
     use {
-      'kabouzeid/nvim-lspinstall',
-      requires = 'nvim-lspconfig',
+      'williamboman/nvim-lsp-installer',
+      requires = { 'nvim-lspconfig', 'hrsh7th/cmp-nvim-lsp'},
       config = function()
         local capabilities = vim.lsp.protocol.make_client_capabilities()
-        capabilities.textDocument.completion.completionItem.snippetSupport = true
+        capabilities = require('cmp_nvim_lsp').update_capabilities(capabilities)
+        local lsp_installer = require("nvim-lsp-installer")
 
-        local function setup_servers()
-          require'lspinstall'.setup()
-          local servers = require'lspinstall'.installed_servers()
-          for _, server in pairs(servers) do
-            if server == "cpp" then
-              require'lspconfig'[server].setup{
-                cmd = { "clangd", "--background-index", "--completion-style=detailed", "--clang-tidy", "--cross-file-rename" };
-                capabilities = capabilities;
-              }
-            elseif server == "kotlin" then
-              require'lspconfig'[server].setup{
-                capabilities = capabilities;
-                settings = { kotlin = { compiler = { jvm = { target = "1.8" } } } };
-              }
-            else
-              require'lspconfig'[server].setup{
-                capabilities = capabilities;
-              }
-            end
+        -- Register a handler that will be called for all installed servers.
+        -- Alternatively, you may also register handlers on specific server instances instead (see example below).
+        lsp_installer.on_server_ready(function(server)
+          local opts = {}
+          opts.capabilities = capabilities
+
+          if server.name == "clangd" then
+            opts.cmd = { "clangd", "--background-index", "--completion-style=detailed", "--clang-tidy", "--cross-file-rename" }
+          elseif server.name == "kotlin_language_server" then
+            opts.capabilities = capabilities
+            opts.settings = { kotlin = { compiler = { jvm = { target = "1.8" } } } }
           end
-        end
-
-        setup_servers()
-
-        -- Automatically reload after `:LspInstall <server>` so we don't have to restart neovim
-        require'lspinstall'.post_install_hook = function ()
-          setup_servers() -- reload installed servers
-          vim.cmd("bufdo e") -- this triggers the FileType autocmd that starts the server
-        end
+          server:setup(opts)
+        end)
       end
     }
 
@@ -236,38 +229,6 @@ return require'packer'.startup({
     }
 
     -- }}}
-
-    -- {{{ Snippets
-    use {
-      'rafamadriz/friendly-snippets',
-      depends = 'vim-vsnip'
-    }
-
-    use {
-      'hrsh7th/vim-vsnip',
-      config = function() vim.cmd[[
-        " Expand
-        imap <expr> <C-j>   vsnip#expandable()  ? '<Plug>(vsnip-expand)'         : '<C-j>'
-        smap <expr> <C-j>   vsnip#expandable()  ? '<Plug>(vsnip-expand)'         : '<C-j>'
-
-        " Expand or jump
-        imap <expr> <C-l>   vsnip#available(1)  ? '<Plug>(vsnip-expand-or-jump)' : '<C-l>'
-        smap <expr> <C-l>   vsnip#available(1)  ? '<Plug>(vsnip-expand-or-jump)' : '<C-l>'
-
-        " Jump forward or backward
-        imap <expr> <Tab>   vsnip#jumpable(1)   ? '<Plug>(vsnip-jump-next)'      : '<Tab>'
-        smap <expr> <Tab>   vsnip#jumpable(1)   ? '<Plug>(vsnip-jump-next)'      : '<Tab>'
-        imap <expr> <S-Tab> vsnip#jumpable(-1)  ? '<Plug>(vsnip-jump-prev)'      : '<S-Tab>'
-        smap <expr> <S-Tab> vsnip#jumpable(-1)  ? '<Plug>(vsnip-jump-prev)'      : '<S-Tab>'
-
-        " Select or cut text to use as $TM_SELECTED_TEXT in the next snippet.
-        " See https://github.com/hrsh7th/vim-vsnip/pull/50
-        "xmap        s   <Plug>(vsnip-select-text)
-        "nmap        S   <Plug>(vsnip-cut-text)
-        "xmap        S   <Plug>(vsnip-cut-text)
-      ]] end
-  }
-  -- }}}
 
   -- {{{ Fuzzy Finder
   use {
@@ -296,42 +257,52 @@ return require'packer'.startup({
 
   -- {{{ Autocompletion
   use {
-    'hrsh7th/nvim-compe',
-    depends = 'vim-vsnip',
+    'hrsh7th/nvim-cmp',
+    requires = {
+      'hrsh7th/cmp-nvim-lsp',
+      'saadparwaiz1/cmp_luasnip',
+      'L3MON4D3/LuaSnip' 
+    },
     config = function()
-      vim.cmd[[
-        set completeopt=menuone,noselect
-        inoremap <silent><expr> <C-Space> compe#complete()
-        inoremap <silent><expr> <CR>      compe#confirm('<CR>')
-        inoremap <silent><expr> <C-y>     compe#confirm('<C-y>')
-        inoremap <silent><expr> <C-e>     compe#close('<C-e>')
-        inoremap <silent><expr> <C-f>     compe#scroll({ 'delta': +4 })
-        inoremap <silent><expr> <C-d>     compe#scroll({ 'delta': -4 })
-      ]]
+      local cmp = require'cmp'
+      local luasnip = require'luasnip'
+      cmp.setup {
+        snippet = {
+          expand = function(args)
+            luasnip.lsp_expand(args.body)
+          end,
+        },
+        mapping = {
+          ['<C-p>'] = cmp.mapping.select_prev_item(),
+          ['<C-n>'] = cmp.mapping.select_next_item(),
+          ['<C-d>'] = cmp.mapping.scroll_docs(-4),
+          ['<C-f>'] = cmp.mapping.scroll_docs(4),
+          ['<C-Space>'] = cmp.mapping.complete(),
+          ['<C-e>'] = cmp.mapping.close(),
+          ['<CR>'] = cmp.mapping.confirm {
+            behavior = cmp.ConfirmBehavior.Replace,
+            select = true,
+          },
+          ['<Tab>'] = cmp.mapping(function(fallback)
+            if luasnip.expand_or_jumpable() then
+              vim.fn.feedkeys(vim.api.nvim_replace_termcodes('<Plug>luasnip-expand-or-jump', true, true, true), '')
+            else
+              fallback()
+            end
+          end, { "i", "s" }),
+          ['<S-Tab>'] = cmp.mapping(function(fallback)
+            if luasnip.jumpable(-1) then
+              vim.fn.feedkeys(vim.api.nvim_replace_termcodes('<Plug>luasnip-jump-prev', true, true, true), '')
+            else
+              fallback()
+            end
+          end, { "i", "s" }),
 
-      require'compe'.setup {
-        enabled = true;
-        autocomplete = true;
-        debug = false;
-        min_length = 1;
-        preselect = 'enable';
-        throttle_time = 80;
-        source_timeout = 200;
-        incomplete_delay = 400;
-        max_abbr_width = 100;
-        max_kind_width = 100;
-        max_menu_width = 100;
-        documentation = true;
-        source = {
-          path = true;
-          buffer = true;
-          calc = true;
-          nvim_lsp = true;
-          nvim_lua = true;
-          vsnip = true;
-          ultisnips = false;
-          omni = false;
-        };
+        },
+        sources = {
+          { name = 'nvim_lsp' },
+          { name = 'luasnip' },
+        },
       }
     end
   }
