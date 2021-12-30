@@ -71,17 +71,13 @@ return require'packer'.startup({
     }
 
     use {
-      'airblade/vim-gitgutter',
-      config = function() vim.cmd[[
-        nmap <Leader>gs <Plug>(GitGutterStageHunk)
-        nmap <Leader>gu <Plug>(GitGutterUndoHunk)
-        nmap <Leader>gp <Plug>(GitGutterPreviewHunk)
-        " Fix conflict with textobj-comment
-        omap iC <Plug>(GitGutterTextObjectInnerPending)
-        omap aC <Plug>(GitGutterTextObjectOuterPending)
-        xmap iC <Plug>(GitGutterTextObjectInnerVisual)
-        xmap aC <Plug>(GitGutterTextObjectOuterVisual)
-      ]] end
+      'lewis6991/gitsigns.nvim',
+      requires = {
+        'nvim-lua/plenary.nvim'
+      },
+      config = function()
+        require('gitsigns').setup()
+      end
     }
 
     use {
@@ -98,7 +94,7 @@ return require'packer'.startup({
     }
     -- }}}
 
-    -- {{{ Color Schemes
+    -- {{{ Appearance
     use {
       'folke/lsp-colors.nvim',
       opt = true,
@@ -121,6 +117,10 @@ return require'packer'.startup({
       config = function()
         -- vim.cmd[[colorscheme sonokai]]
       end
+    }
+    use {
+      'feline-nvim/feline.nvim',
+      config = function() require('feline').setup() end
     }
     -- }}}
 

@@ -152,7 +152,6 @@ nmap <LocalLeader><LocalLeader> gd
 augroup type_specific_conf
   au!
   au FileType c,cpp setlocal colorcolumn=100 list spell
-  au FileType c,cpp setlocal iskeyword+=:
   au FileType c,cpp setlocal errorformat^=%I%f:%l:%c:\ note:%m,%I%f:%l:\ note:%m,%f:%l:%c:\ %t%*[^:]:%m,%f:%l:\ %t%*[^:]:%m
   au FileType c,cpp nnoremap <buffer> <LocalLeader>l :tabnew<CR>
         \:silent 0r ! lizard -ENS -EIgnoreAssert -T length=100 #<CR>
@@ -161,6 +160,8 @@ augroup type_specific_conf
   au FileType c,cpp iabbrev <buffer> anoo __attribute__((optimize("O0"))) // FIXME
   au FileType c,cpp iabbrev <buffer> gnoo #pragma GCC optimize("O0") // FIXME
   au FileType c,cpp iabbrev <buffer> cnoo #pragma clang optimize off // FIXME
+
+  au FileType git set foldmethod=syntax
 
   au FileType vimwiki nnoremap <buffer> <LocalLeader>p :VimwikiDiaryPrevDay<CR>
   au FileType vimwiki nnoremap <buffer> <LocalLeader>n :VimwikiDiaryNextDay<CR>
