@@ -47,3 +47,7 @@ else
 fi
 unset __conda_setup
 # <<< conda initialize <<<
+
+setopt prompt_subst
+. /usr/local/etc/bash_completion.d/git-prompt.sh
+export RPROMPT=$'$(__git_ps1 "%s")'
