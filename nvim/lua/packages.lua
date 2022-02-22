@@ -243,7 +243,6 @@ return require'packer'.startup({
       nnoremap <leader>/ <cmd>Telescope live_grep<cr>
       nnoremap <leader>* <cmd>Telescope grep_string<cr>
       nnoremap <leader>b <cmd>Telescope buffers<cr>
-      nnoremap <leader>h <cmd>Telescope help_tags<cr>
       nnoremap <leader>o <cmd>Telescope lsp_document_symbols<cr>
       nnoremap <leader>O <cmd>Telescope lsp_dynamic_workspace_symbols<cr>
       nnoremap <leader>E <cmd>Telescope lsp_workspace_diagnostics<cr>
@@ -260,8 +259,9 @@ return require'packer'.startup({
     'hrsh7th/nvim-cmp',
     requires = {
       'hrsh7th/cmp-nvim-lsp',
+      'hrsh7th/cmp-path',
       'saadparwaiz1/cmp_luasnip',
-      'L3MON4D3/LuaSnip' 
+      'L3MON4D3/LuaSnip'
     },
     config = function()
       local cmp = require'cmp'
@@ -302,6 +302,7 @@ return require'packer'.startup({
         sources = {
           { name = 'nvim_lsp' },
           { name = 'luasnip' },
+          { name = 'path' },
         },
       }
     end
