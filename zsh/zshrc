@@ -51,3 +51,5 @@ unset __conda_setup
 setopt prompt_subst
 . /usr/local/etc/bash_completion.d/git-prompt.sh
 export RPROMPT=$'$(__git_ps1 "%s")'
+
+precmd () {print -Pn "\e]0;%2~\a"}
