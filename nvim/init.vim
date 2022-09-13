@@ -6,6 +6,7 @@ let g:polyglot_disabled = ['radiance']
 lua require'packages'
 
 nnoremap <leader>m <cmd>make<CR>
+nnoremap <leader>M <cmd>Make<CR>
 
 set termguicolors
 set background=dark

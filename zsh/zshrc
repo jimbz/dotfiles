@@ -11,45 +11,32 @@ zle -N history-beginning-search-forward-end history-search-end
 bindkey "^[[A" history-beginning-search-backward-end
 bindkey "^[[B" history-beginning-search-forward-end
 
-fpath=(/usr/local/share/zsh-completions $fpath)
-autoload -U compinit && compinit
-
 # Enable Ctrl-x-e to edit command line
 autoload -U edit-command-line
 zle -N edit-command-line
 bindkey '^xe' edit-command-line
 bindkey '^x^e' edit-command-line
 
+export PATH="/opt/homebrew/bin:$PATH"
+
+fpath=($(brew --prefix)/share/zsh-completions $fpath)
+autoload -U compinit && compinit
+
 export EDITOR=nvim
 export PATH="$PATH:$HOME/.cargo/bin"
-export PATH="/usr/local/opt/llvm/bin:$PATH"
+export PATH="$(brew --prefix)/opt/llvm/bin:$PATH"
 export PATH="$HOME/Library/Android/sdk/platform-tools:$PATH"
 
 alias bbat="bat --theme=\$(defaults read -globalDomain AppleInterfaceStyle &> /dev/null && echo default || echo GitHub)"
-export BYOBU_PREFIX=/usr/local
-export JAVA_HOME=/usr/local/opt/java11
+export JAVA_HOME="$(brew --prefix)/opt/java11"
 
 [[ -n $VIRTUAL_ENV && -e "${VIRTUAL_ENV}/bin/activate" ]] && source "${VIRTUAL_ENV}/bin/activate"
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 [[ -r "$HOME/.fzf.git.bash" ]] && . "$HOME/.fzf.git.bash"
 
-# >>> conda initialize >>>
-# !! Contents within this block are managed by 'conda init' !!
-__conda_setup="$('/usr/local/anaconda3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
-if [ $? -eq 0 ]; then
-    eval "$__conda_setup"
-else
-    if [ -f "/usr/local/anaconda3/etc/profile.d/conda.sh" ]; then
-        . "/usr/local/anaconda3/etc/profile.d/conda.sh"
-    else
-        export PATH="/usr/local/anaconda3/bin:$PATH"
-    fi
-fi
-unset __conda_setup
-# <<< conda initialize <<<
-
 setopt prompt_subst
-. /usr/local/etc/bash_completion.d/git-prompt.sh
+. $(brew --prefix)/etc/bash_completion.d/git-prompt.sh
 export RPROMPT=$'$(__git_ps1 "%s")'
 
 precmd () {print -Pn "\e]0;%2~\a"}
+eval "$(pyenv init -)"
